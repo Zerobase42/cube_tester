@@ -16,7 +16,9 @@ enum{
     DOWN_KEY=280
 };
 
-int selectLetteringScheme=1;
+int selectLetteringScheme;
+int UP_COLOR=0;
+int FRONT_COLOR=2;
 
 const char SPEFFZ[6][3][3]={{
         {'A','B','C'},
@@ -106,7 +108,6 @@ void gotoxy(int x,int y){
     Pos.Y=y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),Pos);
 }
-
 void gotoprt(int x,int y,string s){
     gotoxy(x,y);
     cout<<s;
@@ -121,6 +122,7 @@ int GetKeyDown(){
     }
     return 0;
 }
+
 void SetConsoleView(){
     system("mode con:cols=55 lines=25");
     system("title [CubeGame] by.0B42");
@@ -159,13 +161,14 @@ bool ReadyGame(){
     return false;
 }
 
-void drawMenuLetter(int letteringScheme){
+void DrawMenuLetter(){
+    selectLetteringScheme^=1;
     system("cls");
     gotoprt(0,1,"=============================================");
     for(int i=0;i<3;i++){
         gotoxy(8,3+i);
         for(int j=0;j<3;j++){
-            if(letteringScheme) cout<<SPEFFZ[0][i][j]<<' ';
+            if(selectLetteringScheme) cout<<SPEFFZ[0][i][j]<<' ';
             else cout<<CHINESE[0][i][j]<<' ';
         }
         cout<<"\n";
@@ -174,7 +177,7 @@ void drawMenuLetter(int letteringScheme){
         gotoxy(5,6+i);
         for(int j=0;j<4;j++){
             for(int k=0;k<3;k++){
-                if(letteringScheme) cout<<SPEFFZ[j][i][k]<<' ';
+                if(selectLetteringScheme) cout<<SPEFFZ[j][i][k]<<' ';
                 else cout<<CHINESE[j][i][k]<<' ';
             }
         }
@@ -183,7 +186,7 @@ void drawMenuLetter(int letteringScheme){
     for(int i=0;i<3;i++){
         gotoxy(8,9+i);
         for(int j=0;j<3;j++){
-            if(letteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
+            if(selectLetteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
             else cout<<CHINESE[5][i][j]<<' ';
         }
         cout<<"\n";
@@ -201,15 +204,23 @@ void drawMenuLetter(int letteringScheme){
     gotoprt(0,18,"=============================================");
     gotoprt(9,19,"by. 0B42");
 }
-
-void Menu_Letter(){
-    drawMenuLetter(selectLetteringScheme);
+void MenuLetter(){
+    DrawMenuLetter();
     while(1){
         int key=GetKeyDown();
         if(key==LEFT_KEY||key==RIGHT_KEY)
-            drawMenuLetter(selectLetteringScheme^=1);
+            DrawMenuLetter();
         else if(key=='q'||key=='Q')
             return;
+    }
+}
+void DrawSelectColorUF(){
+    return; // TODO: 포인터처럼 모양을 만들어 좌우로 두 면 배치, 화살표 좌우로 각 면 조정, U,F로 각 면 지정
+}
+void SelectColorUF(){
+    DrawSelectColorUF();
+    while(1){
+        int key=GetKeyDown();
     }
 }
 
@@ -221,7 +232,11 @@ void StartMenu(){
         else if(key=='q'||key=='Q')
             return;
         else if(key=='s'||key=='S'){
-            Menu_Letter();
+            MenuLetter();
+            DrawMenu();
+        }
+        else if(key=='c'||key=='C'){
+            SelectColorUF();
             DrawMenu();
         }
     }

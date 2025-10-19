@@ -16,6 +16,37 @@ enum KEYBOARD{
     DOWN=80
 };
 
+int selectLetteringScheme;
+
+char Speffz[6][3][3]={{
+        {'A','B','C'},
+        {'D',' ','B'},
+        {'D','C','C'}
+    },{
+        {'E','E','F'},
+        {'H',' ','F'},
+        {'H','G','G'}
+    },{
+        {'I','I','J'},
+        {'L',' ','J'},
+        {'L','K','K'}
+    },{
+        {'M','M','N'},
+        {'P',' ','N'},
+        {'P','O','O'}
+    },{
+        {'Q','Q','R'},
+        {'T',' ','R'},
+        {'T','S','S'}
+    },{
+        {'U','U','V'},
+        {'X',' ','V'},
+        {'X','W','W'}
+    },
+};
+
+
+
 void gotoxy(int x,int y){
     COORD Pos;
     Pos.X=2*x;
@@ -37,32 +68,27 @@ int GetKeyDown(){
     return 0;
 }
 void SetConsoleView(){
-    system("mode con:cols=50 lines=20");
+    system("mode con:cols=35 lines=20");
     system("title [CubeGame] by.0B42");
 }
 void DrawReadyGame(){
     system("cls");
-    gotoxy(5,2);
-    cout<<"==============================";
-    gotoxy(5,3);
-    cout<<"===== 3Blind Helper Game =====";
-    gotoxy(5,4);
-    cout<<"==============================";
-    gotoxy(7,6);
-    cout<<"Start : Press Space";
-    gotoxy(7,7);
-    cout<<"Quit : Press Q";
-    gotoxy(9,14);
-    cout<<"by. 0B42";
+    gotoprt(5,2,"==============================");
+    gotoprt(5,3,"===== 3Blind Helper Game =====");
+    gotoprt(5,4,"==============================");
+    gotoprt(7,6,"Start : Press Space");
+    gotoprt(7,7,"Quit : Press Q");
+    gotoprt(9,14,"by. 0B42");
 }
 
 void DrawMenu(){
     system("cls");
-    gotoxy(5,2);
-    cout<<"===================================";
-    gotoxy(5,18);
-    cout<<"===================================";
-    
+    gotoprt(5,2,"===================================");
+    gotoprt(10,4,"Menu");
+    gotoprt(7,6,"Start : Press Space");
+    gotoprt(7,8,"Select Lettering Scheme : Press S");
+    gotoprt(5,12,"===================================");
+    gotoprt(9,14,"by. 0B42");
 }
 
 bool ReadyGame(){

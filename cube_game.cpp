@@ -1,10 +1,20 @@
 #include<iostream>
+#include<string>
 #include<ctime>
 #include<cstdlib>
 #include<conio.h>
 #include<Windows.h>
 #include<vector>
 using namespace std;
+#define MAGIC_KEY 224
+#define SPACE 32
+
+enum KEYBOARD{
+    UP=72,
+    LEFT=75,
+    RIGHT=77,
+    DOWN=80
+};
 
 void gotoxy(int x,int y){
     COORD Pos;
@@ -12,9 +22,18 @@ void gotoxy(int x,int y){
     Pos.Y=y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),Pos);
 }
+
+void gotoprt(int x,int y,string s){
+    gotoxy(x,y);
+    cout<<s;
+}
+
 int GetKeyDown(){
+    int key;
     if(_kbhit()!=0)
-        return _getch();
+        key=_getch();
+        if(key==MAGIC_KEY)return _getch();
+        else return key;
     return 0;
 }
 void SetConsoleView(){
@@ -23,7 +42,7 @@ void SetConsoleView(){
 }
 void DrawReadyGame(){
     system("cls");
-    gotoxy(5,2);
+    gotoprt(5,2);
     cout<<"==============================";
     gotoxy(5,3);
     cout<<"===== 3Blind Helper Game =====";
@@ -36,17 +55,28 @@ void DrawReadyGame(){
     gotoxy(9,14);
     cout<<"by. 0B42";
 }
+
+void DrawMenu(){
+    system("cls");
+    gotoxy(5,2);
+    cout<<"===================================";
+    gotoxy(5,18);
+    cout<<"===================================";
+    
+}
+
 bool ReadyGame(){
     DrawReadyGame();
     while(1){
         int key=GetKeyDown();
-        if(key==' ')return true;
+        if(key==SPACE)return true;
         else if(key=='q'||key=='Q')break;
     }
     return false;
 }
 
 void StartGame(){
+    DrawMenu();
     return;
 }
 

@@ -42,7 +42,7 @@ void SetConsoleView(){
 }
 void DrawReadyGame(){
     system("cls");
-    gotoprt(5,2);
+    gotoxy(5,2);
     cout<<"==============================";
     gotoxy(5,3);
     cout<<"===== 3Blind Helper Game =====";

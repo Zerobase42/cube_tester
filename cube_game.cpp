@@ -116,7 +116,7 @@ int GetKeyDown(){
     int key;
     if(_kbhit()!=0)
         key=_getch();
-        if(key==MAGIC_KEY)return _getch();
+        if(key==MAGIC_KEY)return _getch()+200;
         else return key;
     return 0;
 }
@@ -140,6 +140,7 @@ void DrawMenu(){
     gotoprt(10,4,"Menu");
     gotoprt(7,6,"Start : Press Space");
     gotoprt(7,8,"Select Lettering Scheme : Press S");
+    gotoprt(7,10,"Select U&F color : Press C");
     gotoprt(5,12,"===================================");
     gotoprt(9,14,"by. 0B42");
 }
@@ -154,9 +155,24 @@ bool ReadyGame(){
     return false;
 }
 
-void StartGame(){
-    DrawMenu();
+void Menu_Letter(){
     return;
+}
+
+void StartMenu(){
+    DrawMenu();
+    while(1){
+        int key=GetKeyDown();
+        if(key==SPACE)break;
+        else if(key=='s'||key=='S'){
+            Menu_Letter();
+            DrawMenu();
+        }
+    }
+}
+
+void StartGame(){
+    StartMenu();
 }
 
 int main(){

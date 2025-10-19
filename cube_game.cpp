@@ -23,10 +23,42 @@ void SetConsoleView(){
     system("mode con:cols=50 lines=20");
     system("title [CubeGame] by.0B42");
 }
+void DrawReadyGame(){
+    system("cls");
+    gotoxy(5,2);
+    cout<<"==============================";
+    gotoxy(5,3);
+    cout<<"===== 3Blind Helper Game =====";
+    gotoxy(5,4);
+    cout<<"==============================";
+    gotoxy(7,6);
+    cout<<"Start : Press Space";
+    gotoxy(7,7);
+    cout<<"Quit : Press Q";
+    gotoxy(9,14);
+    cout<<"by. 0B42";
+}
+bool ReadyGame(){
+    DrawReadyGame();
+    while(1){
+        int key=GetKeyDown();
+        if(key==' ')return true;
+        else if(key=='q'||key=='Q')break;
+    }
+    return false;
+}
+
+void StartGame(){
+    return;
+}
 
 int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
+    SetConsoleView();
+    bool isStart=false;
+    while(1){
+        isStart=ReadyGame();
+        if(isStart)StartGame();
+        else break;
+    }
     return 0;
 }

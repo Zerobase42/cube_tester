@@ -14,6 +14,11 @@ void gotoxy(int x,int y){
     Pos.Y=y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),Pos);
 }
+int GetKeyDown(){
+    if(_kbhit()!=0)
+        return _getch();
+    return 0;
+}
 
 int main(){
     return 0;

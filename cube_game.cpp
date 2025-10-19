@@ -138,12 +138,12 @@ void DrawReadyGame(){
 
 void DrawMenu(){
     system("cls");
-    gotoprt(0,2,"===================================");
+    gotoprt(0,2,"=============================================");
     gotoprt(10,4,"Menu");
     gotoprt(7,6,"Start : Press Space");
     gotoprt(7,8,"Select Lettering Scheme : Press S");
     gotoprt(7,10,"Select U&F color : Press C");
-    gotoprt(0,16,"===================================");
+    gotoprt(0,16,"=============================================");
     gotoprt(9,18,"by. 0B42");
 }
 
@@ -159,7 +159,7 @@ bool ReadyGame(){
 
 void drawMenuLetter(int letteringScheme){
     system("cls");
-    gotoprt(0,2,"===================================");
+    gotoprt(0,2,"=============================================");
     for(int i=0;i<3;i++){
         gotoxy(12,4+i);
         for(int j=0;j<3;j++){
@@ -179,14 +179,14 @@ void drawMenuLetter(int letteringScheme){
         cout<<'\n';
     }
     for(int i=0;i<3;i++){
-        gotoxy(12,11+i);
+        gotoxy(12,10+i);
         for(int j=0;j<3;j++){
             if(letteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
             else cout<<CHINESE[5][i][j]<<' ';
         }
         cout<<"\n";
     }
-    gotoxy(6,14);
+    gotoxy(8,14);
     cout<<"< ";
     if(letteringScheme)
         cout<<"Speffz";
@@ -196,7 +196,7 @@ void drawMenuLetter(int letteringScheme){
     cout<<" >";
     gotoprt(6,15,"Quit this menu : Press Q");
 
-    gotoprt(0,16,"===================================");
+    gotoprt(0,16,"=============================================");
     gotoprt(9,18,"by. 0B42");
 }
 

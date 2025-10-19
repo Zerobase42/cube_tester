@@ -114,14 +114,15 @@ void gotoprt(int x,int y,string s){
 
 int GetKeyDown(){
     int key;
-    if(_kbhit()!=0)
+    if(_kbhit()!=0){
         key=_getch();
         if(key==MAGIC_KEY)return _getch()+200;
         else return key;
+    }
     return 0;
 }
 void SetConsoleView(){
-    system("mode con:cols=35 lines=20");
+    system("mode con:cols=55 lines=25");
     system("title [CubeGame] by.0B42");
 }
 
@@ -145,7 +146,7 @@ void DrawMenu(){
     gotoprt(5,11,"Select U&F color : Press C");
     gotoprt(5,13,"Quit : Press Q");
     gotoprt(0,18,"=============================================");
-    gotoprt(9,20,"by. 0B42");
+    gotoprt(9,19,"by. 0B42");
 }
 
 bool ReadyGame(){
@@ -162,7 +163,7 @@ void drawMenuLetter(int letteringScheme){
     system("cls");
     gotoprt(0,1,"=============================================");
     for(int i=0;i<3;i++){
-        gotoxy(12,3+i);
+        gotoxy(8,3+i);
         for(int j=0;j<3;j++){
             if(letteringScheme) cout<<SPEFFZ[0][i][j]<<' ';
             else cout<<CHINESE[0][i][j]<<' ';
@@ -180,7 +181,7 @@ void drawMenuLetter(int letteringScheme){
         cout<<'\n';
     }
     for(int i=0;i<3;i++){
-        gotoxy(12,9+i);
+        gotoxy(8,9+i);
         for(int j=0;j<3;j++){
             if(letteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
             else cout<<CHINESE[5][i][j]<<' ';
@@ -198,7 +199,7 @@ void drawMenuLetter(int letteringScheme){
     gotoprt(6,16,"Quit this menu : Press Q");
 
     gotoprt(0,18,"=============================================");
-    gotoprt(9,20,"by. 0B42");
+    gotoprt(9,19,"by. 0B42");
 }
 
 void Menu_Letter(){

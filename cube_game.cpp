@@ -127,24 +127,25 @@ void SetConsoleView(){
 
 void DrawReadyGame(){
     system("cls");
-    gotoprt(5,2,"==============================");
-    gotoprt(5,3,"===== 3Blind Helper Game =====");
-    gotoprt(5,4,"==============================");
+    gotoprt(5,1,"=============================================");
+    gotoprt(5,2,"============= 3Blind Helper Game ============");
+    gotoprt(5,3,"=============================================");
     gotoprt(7,6,"Start : Press Space");
     gotoprt(7,7,"Quit : Press Q");
-    gotoprt(5,16,"===================================");
-    gotoprt(9,18,"by. 0B42");
+    gotoprt(5,10,"=============================================");
+    gotoprt(9,12,"by. 0B42");
 }
 
 void DrawMenu(){
     system("cls");
-    gotoprt(0,2,"=============================================");
-    gotoprt(10,4,"Menu");
-    gotoprt(7,6,"Start : Press Space");
-    gotoprt(7,8,"Select Lettering Scheme : Press S");
-    gotoprt(7,10,"Select U&F color : Press C");
-    gotoprt(0,16,"=============================================");
-    gotoprt(9,18,"by. 0B42");
+    gotoprt(0,1,"=============================================");
+    gotoprt(10,3,"Menu");
+    gotoprt(5,7,"Start : Press Space");
+    gotoprt(5,9,"Select Lettering Scheme : Press S");
+    gotoprt(5,11,"Select U&F color : Press C");
+    gotoprt(5,13,"Quit : Press Q");
+    gotoprt(0,18,"=============================================");
+    gotoprt(9,20,"by. 0B42");
 }
 
 bool ReadyGame(){
@@ -159,9 +160,9 @@ bool ReadyGame(){
 
 void drawMenuLetter(int letteringScheme){
     system("cls");
-    gotoprt(0,2,"=============================================");
+    gotoprt(0,1,"=============================================");
     for(int i=0;i<3;i++){
-        gotoxy(12,4+i);
+        gotoxy(12,3+i);
         for(int j=0;j<3;j++){
             if(letteringScheme) cout<<SPEFFZ[0][i][j]<<' ';
             else cout<<CHINESE[0][i][j]<<' ';
@@ -169,7 +170,7 @@ void drawMenuLetter(int letteringScheme){
         cout<<"\n";
     }
     for(int i=0;i<3;i++){
-        gotoxy(5,7+i);
+        gotoxy(5,6+i);
         for(int j=0;j<4;j++){
             for(int k=0;k<3;k++){
                 if(letteringScheme) cout<<SPEFFZ[j][i][k]<<' ';
@@ -179,7 +180,7 @@ void drawMenuLetter(int letteringScheme){
         cout<<'\n';
     }
     for(int i=0;i<3;i++){
-        gotoxy(12,10+i);
+        gotoxy(12,9+i);
         for(int j=0;j<3;j++){
             if(letteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
             else cout<<CHINESE[5][i][j]<<' ';
@@ -194,10 +195,10 @@ void drawMenuLetter(int letteringScheme){
         cout<<"Chinese";
     
     cout<<" >";
-    gotoprt(6,15,"Quit this menu : Press Q");
+    gotoprt(6,16,"Quit this menu : Press Q");
 
-    gotoprt(0,16,"=============================================");
-    gotoprt(9,18,"by. 0B42");
+    gotoprt(0,18,"=============================================");
+    gotoprt(9,20,"by. 0B42");
 }
 
 void Menu_Letter(){
@@ -216,6 +217,8 @@ void StartMenu(){
     while(1){
         int key=GetKeyDown();
         if(key==SPACE)break;
+        else if(key=='q'||key=='Q')
+            return;
         else if(key=='s'||key=='S'){
             Menu_Letter();
             DrawMenu();

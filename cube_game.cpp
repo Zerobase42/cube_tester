@@ -158,6 +158,7 @@ bool ReadyGame(){
 }
 
 void drawMenuLetter(int letteringScheme){
+    system("cls");
     gotoprt(0,2,"===================================");
     for(int i=0;i<3;i++){
         gotoxy(12,4+i);
@@ -186,13 +187,13 @@ void drawMenuLetter(int letteringScheme){
         cout<<"\n";
     }
     gotoxy(6,14);
-    cout<<'< ';
+    cout<<"< ";
     if(letteringScheme)
         cout<<"Speffz";
     else
         cout<<"Chinese";
     
-    cout<<' >';
+    cout<<" >";
     gotoprt(6,15,"Quit this menu : Press Q");
 
     gotoprt(0,16,"===================================");

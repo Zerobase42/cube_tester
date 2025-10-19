@@ -8,7 +8,6 @@
 using namespace std;
 #define MAGIC_KEY 224
 #define SPACE 32
-
 enum{
     UP_KEY=272,
     LEFT_KEY=275,
@@ -46,7 +45,6 @@ const char SPEFFZ[6][3][3]={{
         {'X','W','W'}
     }
 };
-
 const char CHINESE[6][3][3]={{
         {'D','E','G'},
         {'C',' ','G'},
@@ -138,19 +136,6 @@ void DrawReadyGame(){
     gotoprt(5,10,"=============================================");
     gotoprt(9,12,"by. 0B42");
 }
-
-void DrawMenu(){
-    system("cls");
-    gotoprt(0,1,"=============================================");
-    gotoprt(10,3,"Menu");
-    gotoprt(5,7,"Start : Press Space");
-    gotoprt(5,9,"Select Lettering Scheme : Press S");
-    gotoprt(5,11,"Select U&F color : Press C");
-    gotoprt(5,13,"Quit : Press Q");
-    gotoprt(0,18,"=============================================");
-    gotoprt(9,19,"by. 0B42");
-}
-
 bool ReadyGame(){
     DrawReadyGame();
     while(1){
@@ -223,14 +208,24 @@ void SelectColorUF(){
         int key=GetKeyDown();
     }
 }
-
+void DrawMenu(){
+    system("cls");
+    gotoprt(0,1,"=============================================");
+    gotoprt(10,3,"Menu");
+    gotoprt(5,7,"Start : Press Space");
+    gotoprt(5,9,"Select Lettering Scheme : Press S");
+    gotoprt(5,11,"Select U&F color : Press C");
+    gotoprt(5,13,"Quit : Press Q");
+    gotoprt(0,18,"=============================================");
+    gotoprt(9,19,"by. 0B42");
+}
 void StartMenu(){
     DrawMenu();
     while(1){
         int key=GetKeyDown();
         if(key==SPACE)break;
         else if(key=='q'||key=='Q')
-            return;
+            break;
         else if(key=='s'||key=='S'){
             MenuLetter();
             DrawMenu();
@@ -244,6 +239,7 @@ void StartMenu(){
 
 void StartGame(){
     StartMenu();
+    // game code to here
 }
 
 int main(){

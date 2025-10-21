@@ -209,6 +209,7 @@ void DrawMenuLetter(){
         for(int j=0;j<3;j++){
             if(selectLetteringScheme)whatToPrint+=SPEFFZ[0][i][j]+' ';
             else whatToPrint+=CHINESE[0][i][j]+' ';
+            whatToPrint+=' ';
         }
         gotoprt(8,3+i,whatToPrint);
     }
@@ -219,6 +220,7 @@ void DrawMenuLetter(){
             for(int k=0;k<3;k++){
                 if(selectLetteringScheme) whatToPrint+=SPEFFZ[j][i][k]+' ';
                 else whatToPrint+=CHINESE[j][i][k]+' ';
+                whatToPrint+=' ';
             }
         }
         gotoprt(5,6+i,whatToPrint);
@@ -229,6 +231,7 @@ void DrawMenuLetter(){
         for(int j=0;j<3;j++){
             if(selectLetteringScheme) whatToPrint+=SPEFFZ[5][i][j]+' ';
             else whatToPrint+=CHINESE[5][i][j]+' ';
+            whatToPrint+=' ';
         }
         gotoprt(8,9+i,whatToPrint);
     }
@@ -261,36 +264,54 @@ void DrawSelectColorUF(int arrow){
     FlipBuffer();
 
     gotoprt(0,1,"=============================================");
-    gotoprt(3,3,"SELECT FACE COLOR POSITION");
-    gotoprt(4,8,"UP COLOR          FRONT COLOR");
+    gotoprt(5,2,"[ FACE COLOR SELECT ]");
+    gotoprt(0,3,"=============================================");
 
-    // UP color box
-    gotoprt(3,10,"< ");
-    // 색 출력(현재 버퍼에 텍스트 속성 적용 & 출력)
+    gotoprt(3,5,"Use < > or 0~5 to change color");
+    gotoprt(3,6,"Press [U] or [F] to switch target");
+    gotoprt(3,7,"Quit : [Q]");
+
+    // UP / FRONT 제목
+    gotoprt(2,9,"UP FACE");
+    gotoprt(11,9,"FRONT FACE");
+
+    // 선택 화살표
+    if(arrow==1) gotoprt(0,9,">");
+    else gotoprt(10,9,">");
+
+    // 색 박스 크기 상수
+    int boxWidth = 13;
+    int boxHeight = 3;
+
+    // ── UP FACE 박스
+    gotoprt(2,11,"+-------------+");
+    gotoprt(2,12,"|             |");
+    gotoprt(2,13,"+-------------+");
+    // 색 글자 중앙 정렬
+    string upColor = cubeColor[UP_COLOR];
+    while(upColor.size() < 11) upColor += " ";
     textcolor(ColortoInt(UP_COLOR));
-    gotoprt(6,10,string(cubeColor[UP_COLOR]));
+    gotoprt(4,12,upColor);
     textcolor(WHITE);
-    gotoprt(12,10," >");
 
-    // FRONT color box
-    gotoprt(13,10,"< ");
+    // ── FRONT FACE 박스
+    gotoprt(12,11,"+-------------+");
+    gotoprt(12,12,"|             |");
+    gotoprt(12,13,"+-------------+");
+    string frColor = cubeColor[FRONT_COLOR];
+    while(frColor.size() < 11) frColor += " ";
     textcolor(ColortoInt(FRONT_COLOR));
-    gotoprt(16,10,string(cubeColor[FRONT_COLOR]));
+    gotoprt(14,12,frColor);
     textcolor(WHITE);
-    gotoprt(22,10," >");
 
-    // 화살표(선택 표시)
-    if(arrow) gotoprt(6,12,"^");
-    else gotoprt(16,12,"^");
+    // 하단 색 번호 안내
+    gotoprt(2,16,"[0]WHITE  [1]ORANGE  [2]GREEN");
+    gotoprt(4,17,"[3]RED  [4]BLUE  [5]YELLOW");
 
-    // 도움말 (숫자키 안내 추가)
-    gotoprt(6,14,"UP: PRESS U, FRONT: PRESS F");
-    gotoprt(6,15,"LEFT/RIGHT: Change | Number 0~5: Direct Color Select");
-    gotoprt(6,16,"Quit this menu : Press Q");
     gotoprt(0,18,"=============================================");
     gotoprt(9,19,"by. 0B42");
-    return;
 }
+
 void OverflowCheck(){
     if(UP_COLOR<0)UP_COLOR=5;
     if(FRONT_COLOR<0)FRONT_COLOR=5;
@@ -369,6 +390,7 @@ void SelectColorUF(){
         // 그 외 키는 무시하고 다시 루프
     }
 }
+
 void DrawMenu(){
     FlipBuffer();
     gotoprt(0,1,"=============================================");

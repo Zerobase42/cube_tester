@@ -18,14 +18,14 @@ enum{
 void textcolor(int colorNum) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
 }
-enum {
+enum{
     BLACK,
     DARK_BLUE,
     DARK_GREEN,
     DARK_SKYBLUE,
     DARK_RED,
     DARK_VOILET,
-    DAKR_YELLOW,
+    DARK_YELLOW,
     GRAY,
     DARK_GRAY,
     BLUE,
@@ -34,7 +34,7 @@ enum {
     RED,
     VIOLET,
     YELLOW,
-    WHITE,
+    WHITE
 };
 
 int selectLetteringScheme;
@@ -221,15 +221,29 @@ void MenuLetter(){
             return;
     }
 }
+
+int ColortoInt(int color){
+    int ColorList[6]={WHITE,DARK_YELLOW,GREEN,RED,BLUE,YELLOW};
+    return ColorList[color];
+}
 void DrawSelectColorUF(int arrow){
     system("cls");
     gotoprt(0,1,"=============================================");
     gotoprt(3,3,"SELECT FACE COLOR POSITION");
     gotoprt(4,8,"UP COLOR          FRONT COLOR");
     gotoxy(3,10);
-    cout<<"< "<<cubeColor[UP_COLOR]<<" >";
+    cout<<"< ";
+    textcolor(ColortoInt(UP_COLOR));
+    cout<<cubeColor[UP_COLOR];
+    textcolor(WHITE);
+    cout<<" >";
+
     gotoxy(13,10);
-    cout<<"< "<<cubeColor[FRONT_COLOR]<<" >";
+    cout<<"< ";
+    textcolor(ColortoInt(UP_COLOR));
+    cout<<cubeColor[FRONT_COLOR];
+    textcolor(WHITE);
+    cout<<" >";
     gotoprt(arrow?6:16,12,"^");
     gotoprt(6,14,"UP: PRESS U, FRONT: PRESS F");
     gotoprt(6,16,"Quit this menu : Press Q");

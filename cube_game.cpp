@@ -15,9 +15,11 @@ enum{
     DOWN_KEY=280
 };
 
+
+
 int selectLetteringScheme;
-int UP_COLOR=0;
-int FRONT_COLOR=2;
+int UP_COLOR=0,FRONT_COLOR=2;
+const char cubeColor[6][7]={"WHITE ","ORANGE","GREEN ","  RED "," BLUE ","YELLOW"};
 
 const char SPEFFZ[6][3][3]={{
         {'A','B','C'},
@@ -153,7 +155,7 @@ void DrawMenuLetter(){
     for(int i=0;i<3;i++){
         gotoxy(8,3+i);
         for(int j=0;j<3;j++){
-            if(selectLetteringScheme) cout<<SPEFFZ[0][i][j]<<' ';
+            if(selectLetteringScheme)cout<<SPEFFZ[0][i][j]<<' ';
             else cout<<CHINESE[0][i][j]<<' ';
         }
         cout<<"\n";
@@ -178,7 +180,7 @@ void DrawMenuLetter(){
     }
     gotoxy(8,14);
     cout<<"< ";
-    if(letteringScheme)
+    if(selectLetteringScheme)
         cout<<"Speffz";
     else
         cout<<"Chinese";
@@ -199,13 +201,58 @@ void MenuLetter(){
             return;
     }
 }
-void DrawSelectColorUF(){
-    return; // TODO: 포인터처럼 모양을 만들어 좌우로 두 면 배치, 화살표 좌우로 각 면 조정, U,F로 각 면 지정
+void DrawSelectColorUF(int arrow){
+    system("cls");
+    gotoprt(0,1,"=============================================");
+    gotoprt(3,3,"SELECT FACE COLOR POSITION");
+    gotoprt(4,8,"UP COLOR          FRONT COLOR");
+    gotoxy(3,10);
+    cout<<"< "<<cubeColor[UP_COLOR]<<" >";
+    gotoxy(13,10);
+    cout<<"< "<<cubeColor[FRONT_COLOR]<<" >";
+    gotoprt(arrow?6:16,12,"^");
+    gotoprt(6,14,"UP: PRESS U, FRONT: PRESS F");
+    gotoprt(6,16,"Quit this menu : Press Q");
+    gotoprt(0,18,"=============================================");
+    gotoprt(9,19,"by. 0B42");
+    return;
 }
+
+void OverflowCheck(){
+    if(UP_COLOR<0)UP_COLOR=5;
+    if(FRONT_COLOR<0)FRONT_COLOR=5;
+    if(UP_COLOR>5)UP_COLOR=0;
+    if(FRONT_COLOR>5)FRONT_COLOR=0;
+}
+
 void SelectColorUF(){
-    DrawSelectColorUF();
+    DrawSelectColorUF(0);
+    int arrow=0;
     while(1){
         int key=GetKeyDown();
+        if(key=='q'||key=='Q')
+            break;
+        if(key=='u'||key=='U'){
+            arrow=1;
+            DrawSelectColorUF(arrow);
+        }
+        if(key=='f'||key=='F'){
+            arrow=0;
+            DrawSelectColorUF(arrow);
+        }
+        if(key==LEFT_KEY){
+            if(arrow) UP_COLOR--;
+            else FRONT_COLOR--;
+            OverflowCheck();
+            DrawSelectColorUF(arrow);
+        }
+        if(key==RIGHT_KEY){
+            if(arrow) UP_COLOR++;
+            else FRONT_COLOR++;
+            OverflowCheck();
+            DrawSelectColorUF(arrow);
+        }
+        
     }
 }
 void DrawMenu(){

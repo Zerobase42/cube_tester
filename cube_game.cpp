@@ -259,25 +259,33 @@ int ColortoInt(int color){
 }
 void DrawSelectColorUF(int arrow){
     FlipBuffer();
+
     gotoprt(0,1,"=============================================");
     gotoprt(3,3,"SELECT FACE COLOR POSITION");
     gotoprt(4,8,"UP COLOR          FRONT COLOR");
-    string whatToPrint="";
-    gotoprt(3,10,"< ");
-    
-    textcolor(ColortoInt(UP_COLOR));
-    cout<<cubeColor[UP_COLOR];
-    textcolor(WHITE);
-    cout<<" >";
 
-    gotoxy(13,10);
-    cout<<"< ";
-    textcolor(ColortoInt(FRONT_COLOR));
-    cout<<cubeColor[FRONT_COLOR];
+    // UP color box
+    gotoprt(3,10,"< ");
+    // 색 출력(현재 버퍼에 텍스트 속성 적용 & 출력)
+    textcolor(ColortoInt(UP_COLOR));
+    gotoprt(6,10,string(cubeColor[UP_COLOR]));
     textcolor(WHITE);
-    cout<<" >";
-    gotoprt(arrow?6:16,12,"^");
+    gotoprt(12,10," >");
+
+    // FRONT color box
+    gotoprt(13,10,"< ");
+    textcolor(ColortoInt(FRONT_COLOR));
+    gotoprt(16,10,string(cubeColor[FRONT_COLOR]));
+    textcolor(WHITE);
+    gotoprt(22,10," >");
+
+    // 화살표(선택 표시)
+    if(arrow) gotoprt(6,12,"^");
+    else gotoprt(16,12,"^");
+
+    // 도움말 (숫자키 안내 추가)
     gotoprt(6,14,"UP: PRESS U, FRONT: PRESS F");
+    gotoprt(6,15,"LEFT/RIGHT: Change | Number 0~5: Direct Color Select");
     gotoprt(6,16,"Quit this menu : Press Q");
     gotoprt(0,18,"=============================================");
     gotoprt(9,19,"by. 0B42");
@@ -294,32 +302,73 @@ int oppositeFace(int color){
     return opp[color];
 }
 void SelectColorUF(){
-    int arrow=0;
+    int arrow=0; // 1 = UP selected, 0 = FRONT selected
     while(1){
         DrawSelectColorUF(arrow);
         int key=GetKeyDown();
         if(key=='q'||key=='Q')
             break;
+
         if(key=='u'||key=='U'){
             arrow=1;
+            continue;
         }
         if(key=='f'||key=='F'){
             arrow=0;
+            continue;
         }
 
+        // 방향키 처리 (연속 스킵 포함)
         if(key==LEFT_KEY || key==RIGHT_KEY){
-            int *target=arrow?&UP_COLOR:&FRONT_COLOR;
-            int dir=(key==LEFT_KEY?-1:1);
-            *target+=dir;
+            int *target = arrow ? &UP_COLOR : &FRONT_COLOR;
+            int dir = (key==LEFT_KEY ? -1 : 1);
+
+            // 한 칸 이동
+            *target += dir;
             OverflowCheck();
+
+            // 유효한 조합(같거나 반대면 안됨)이 될 때까지 계속 이동
+            // (만약 전체 6색이 모두 불가능한 경우는 이 루프가 도는 것을 방지해야
+            // 하지만 UP vs FRONT라는 한 쌍에선 항상 적어도 4개의 유효색이 존재)
             while (UP_COLOR == FRONT_COLOR || oppositeFace(UP_COLOR) == FRONT_COLOR) {
                 *target += dir;
                 OverflowCheck();
             }
+            continue;
         }
+
+        // 숫자키 직접 지정 (0~5)
+        if(key >= '0' && key <= '5'){
+            int newColor = key - '0';
+            if(arrow){
+                // UP 선택 상태에서 숫자 입력
+                UP_COLOR = newColor;
+                // 만약 현재 FRONT와 같거나 반대면, newColor에서 한 칸 앞으로(우측) 이동하여 유효 색 찾음
+                if(UP_COLOR == FRONT_COLOR || oppositeFace(UP_COLOR) == FRONT_COLOR){
+                    // 시계방향(+)으로 한 칸씩 이동하여 유효색을 찾음
+                    int tryColor = (newColor + 1) % 6;
+                    while (tryColor == FRONT_COLOR || oppositeFace(tryColor) == FRONT_COLOR){
+                        tryColor = (tryColor + 1) % 6;
+                    }
+                    UP_COLOR = tryColor;
+                }
+            } else {
+                // FRONT 선택 상태에서 숫자 입력
+                FRONT_COLOR = newColor;
+                if(UP_COLOR == FRONT_COLOR || oppositeFace(UP_COLOR) == FRONT_COLOR){
+                    int tryColor = (newColor + 1) % 6;
+                    while (UP_COLOR == tryColor || oppositeFace(UP_COLOR) == tryColor){
+                        tryColor = (tryColor + 1) % 6;
+                    }
+                    FRONT_COLOR = tryColor;
+                }
+            }
+            continue;
+        }
+
+        // 그 외 키는 무시하고 다시 루프
     }
 }
-
 void DrawMenu(){
     FlipBuffer();
     gotoprt(0,1,"=============================================");

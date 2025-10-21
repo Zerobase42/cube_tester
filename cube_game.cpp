@@ -23,7 +23,6 @@ void InitDoubleBuffer() {
     SetConsoleCursorInfo(g_hBuffer[0], &cursorInfo);
     SetConsoleCursorInfo(g_hBuffer[1], &cursorInfo);
 }
-
 void gotoxy(int x, int y) {
     COORD Pos = { SHORT(2 * x), SHORT(y) };
     SetConsoleCursorPosition(g_hBuffer[g_nScreenIndex], Pos);
@@ -36,7 +35,6 @@ void gotoprt(int x, int y, const string &s) {
 void textcolor(int colorNum) {
     SetConsoleTextAttribute(g_hBuffer[g_nScreenIndex], colorNum);
 }
-
 void FlipBuffer(){
     SetConsoleActiveScreenBuffer(g_hBuffer[g_nScreenIndex]);
     g_nScreenIndex = !g_nScreenIndex;
@@ -193,8 +191,8 @@ void DrawReadyGame(){
     gotoprt(9,12,"by. 0B42");
 }
 bool ReadyGame(){
-    DrawReadyGame();
     while(1){
+        DrawReadyGame();
         int key=GetKeyDown();
         if(key==SPACE)return true;
         else if(key=='q'||key=='Q')break;
@@ -203,54 +201,53 @@ bool ReadyGame(){
 }
 
 void DrawMenuLetter(){
-    selectLetteringScheme^=1;
     FlipBuffer();
     gotoprt(0,1,"=============================================");
+    string whatToPrint="";
     for(int i=0;i<3;i++){
-        gotoxy(8,3+i);
+        whatToPrint="";
         for(int j=0;j<3;j++){
-            if(selectLetteringScheme)cout<<SPEFFZ[0][i][j]<<' ';
-            else cout<<CHINESE[0][i][j]<<' ';
+            if(selectLetteringScheme)whatToPrint+=SPEFFZ[0][i][j]+' ';
+            else whatToPrint+=CHINESE[0][i][j]+' ';
         }
-        cout<<"\n";
+        gotoprt(8,3+i,whatToPrint);
     }
     for(int i=0;i<3;i++){
+        whatToPrint="";
         gotoxy(5,6+i);
         for(int j=0;j<4;j++){
             for(int k=0;k<3;k++){
-                if(selectLetteringScheme) cout<<SPEFFZ[j][i][k]<<' ';
-                else cout<<CHINESE[j][i][k]<<' ';
+                if(selectLetteringScheme) whatToPrint+=SPEFFZ[j][i][k]+' ';
+                else whatToPrint+=CHINESE[j][i][k]+' ';
             }
         }
-        cout<<'\n';
+        gotoprt(5,6+i,whatToPrint);
     }
     for(int i=0;i<3;i++){
         gotoxy(8,9+i);
+        whatToPrint="";
         for(int j=0;j<3;j++){
-            if(selectLetteringScheme) cout<<SPEFFZ[5][i][j]<<' ';
-            else cout<<CHINESE[5][i][j]<<' ';
+            if(selectLetteringScheme) whatToPrint+=SPEFFZ[5][i][j]+' ';
+            else whatToPrint+=CHINESE[5][i][j]+' ';
         }
-        cout<<"\n";
+        gotoprt(8,9+i,whatToPrint);
     }
-    gotoxy(8,14);
-    cout<<"< ";
-    if(selectLetteringScheme)
-        cout<<"Speffz";
-    else
-        cout<<"Chinese";
-    
-    cout<<" >";
+    whatToPrint="< ";
+    if(selectLetteringScheme) whatToPrint+="Speffz";
+    else whatToPrint+="Chinese";
+    whatToPrint+=" >";
+    gotoprt(8,14,whatToPrint);
     gotoprt(6,16,"Quit this menu : Press Q");
 
     gotoprt(0,18,"=============================================");
     gotoprt(9,19,"by. 0B42");
 }
 void MenuLetter(){
-    DrawMenuLetter();
     while(1){
+        DrawMenuLetter();
         int key=GetKeyDown();
         if(key==LEFT_KEY||key==RIGHT_KEY)
-            DrawMenuLetter();
+            selectLetteringScheme^=1;
         else if(key=='q'||key=='Q')
             return;
     }
@@ -265,8 +262,9 @@ void DrawSelectColorUF(int arrow){
     gotoprt(0,1,"=============================================");
     gotoprt(3,3,"SELECT FACE COLOR POSITION");
     gotoprt(4,8,"UP COLOR          FRONT COLOR");
-    gotoxy(3,10);
-    cout<<"< ";
+    string whatToPrint="";
+    gotoprt(3,10,"< ");
+    
     textcolor(ColortoInt(UP_COLOR));
     cout<<cubeColor[UP_COLOR];
     textcolor(WHITE);
@@ -296,19 +294,17 @@ int oppositeFace(int color){
     return opp[color];
 }
 void SelectColorUF(){
-    DrawSelectColorUF(0);
     int arrow=0;
     while(1){
+        DrawSelectColorUF(arrow);
         int key=GetKeyDown();
         if(key=='q'||key=='Q')
             break;
         if(key=='u'||key=='U'){
             arrow=1;
-            DrawSelectColorUF(arrow);
         }
         if(key=='f'||key=='F'){
             arrow=0;
-            DrawSelectColorUF(arrow);
         }
 
         if(key==LEFT_KEY || key==RIGHT_KEY){
@@ -320,7 +316,6 @@ void SelectColorUF(){
                 *target += dir;
                 OverflowCheck();
             }
-            DrawSelectColorUF(arrow);
         }
     }
 }
@@ -337,8 +332,8 @@ void DrawMenu(){
     gotoprt(9,19,"by. 0B42");
 }
 void StartMenu(){
-    DrawMenu();
     while(1){
+        DrawMenu();
         int key=GetKeyDown();
         if(key==SPACE)break;
         else if(key=='q'||key=='Q')

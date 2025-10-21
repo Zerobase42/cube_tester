@@ -8,6 +8,14 @@
 using namespace std;
 #define MAGIC_KEY 224
 #define SPACE 32
+
+void CursorView(){
+    CONSOLE_CURSOR_INFO cursorInfo={ 0,};
+    cursorInfo.dwSize = 1;
+    cursorInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+}
+
 enum{
     UP_KEY=272,
     LEFT_KEY=275,
@@ -240,7 +248,7 @@ void DrawSelectColorUF(int arrow){
 
     gotoxy(13,10);
     cout<<"< ";
-    textcolor(ColortoInt(UP_COLOR));
+    textcolor(ColortoInt(FRONT_COLOR));
     cout<<cubeColor[FRONT_COLOR];
     textcolor(WHITE);
     cout<<" >";
@@ -251,14 +259,12 @@ void DrawSelectColorUF(int arrow){
     gotoprt(9,19,"by. 0B42");
     return;
 }
-
 void OverflowCheck(){
     if(UP_COLOR<0)UP_COLOR=5;
     if(FRONT_COLOR<0)FRONT_COLOR=5;
     if(UP_COLOR>5)UP_COLOR=0;
     if(FRONT_COLOR>5)FRONT_COLOR=0;
 }
-
 void SelectColorUF(){
     DrawSelectColorUF(0);
     int arrow=0;
@@ -286,7 +292,6 @@ void SelectColorUF(){
             OverflowCheck();
             DrawSelectColorUF(arrow);
         }
-        
     }
 }
 void DrawMenu(){
@@ -324,9 +329,10 @@ void StartGame(){
 }
 
 int main(){
+    CursorView();
     SetConsoleView();
     bool isStart=false;
-    while(1){
+    while(true){
         isStart=ReadyGame();
         if(isStart)StartGame();
         else break;

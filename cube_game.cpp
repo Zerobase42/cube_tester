@@ -9,6 +9,47 @@ using namespace std;
 #define MAGIC_KEY 224
 #define SPACE 32
 
+HANDLE g_hBuffer[2];
+int g_nScreenIndex = 0;
+
+void InitDoubleBuffer() {
+    g_hBuffer[0] = CreateConsoleScreenBuffer(
+        GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+    g_hBuffer[1] = CreateConsoleScreenBuffer(
+        GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+
+    SetConsoleActiveScreenBuffer(g_hBuffer[0]);
+    CONSOLE_CURSOR_INFO cursorInfo = { 0, FALSE };
+    SetConsoleCursorInfo(g_hBuffer[0], &cursorInfo);
+    SetConsoleCursorInfo(g_hBuffer[1], &cursorInfo);
+}
+
+void gotoxy(int x, int y) {
+    COORD Pos = { SHORT(2 * x), SHORT(y) };
+    SetConsoleCursorPosition(g_hBuffer[g_nScreenIndex], Pos);
+}
+void gotoprt(int x, int y, const string &s) {
+    gotoxy(x, y);
+    DWORD dw;
+    WriteConsoleA(g_hBuffer[g_nScreenIndex], s.c_str(), s.size(), &dw, NULL);
+}
+void textcolor(int colorNum) {
+    SetConsoleTextAttribute(g_hBuffer[g_nScreenIndex], colorNum);
+}
+
+void FlipBuffer(){
+    SetConsoleActiveScreenBuffer(g_hBuffer[g_nScreenIndex]);
+    g_nScreenIndex = !g_nScreenIndex;
+    COORD coord = {0,0};
+    DWORD dw;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(g_hBuffer[g_nScreenIndex], &csbi);
+    FillConsoleOutputCharacter(g_hBuffer[g_nScreenIndex], ' ', csbi.dwSize.X * csbi.dwSize.Y, coord, &dw);
+    FillConsoleOutputAttribute(g_hBuffer[g_nScreenIndex], csbi.wAttributes, csbi.dwSize.X * csbi.dwSize.Y, coord, &dw);
+    SetConsoleCursorPosition(g_hBuffer[g_nScreenIndex], coord);
+}
+
+
 void CursorView(){
     CONSOLE_CURSOR_INFO cursorInfo={ 0,};
     cursorInfo.dwSize = 1;
@@ -22,10 +63,6 @@ enum{
     RIGHT_KEY=277,
     DOWN_KEY=280
 };
-
-void textcolor(int colorNum) {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
-}
 enum{
     BLACK,
     DARK_BLUE,
@@ -130,17 +167,6 @@ const char Korean[6][3][3]={{
 };
 */
 
-void gotoxy(int x,int y){
-    COORD Pos;
-    Pos.X=2*x;
-    Pos.Y=y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),Pos);
-}
-void gotoprt(int x,int y,string s){
-    gotoxy(x,y);
-    cout<<s;
-}
-
 int GetKeyDown(){
     int key;
     if(_kbhit()!=0){
@@ -157,7 +183,7 @@ void SetConsoleView(){
 }
 
 void DrawReadyGame(){
-    system("cls");
+    FlipBuffer();
     gotoprt(5,1,"=============================================");
     gotoprt(5,2,"============= 3Blind Helper Game ============");
     gotoprt(5,3,"=============================================");
@@ -178,7 +204,7 @@ bool ReadyGame(){
 
 void DrawMenuLetter(){
     selectLetteringScheme^=1;
-    system("cls");
+    FlipBuffer();
     gotoprt(0,1,"=============================================");
     for(int i=0;i<3;i++){
         gotoxy(8,3+i);
@@ -235,7 +261,7 @@ int ColortoInt(int color){
     return ColorList[color];
 }
 void DrawSelectColorUF(int arrow){
-    system("cls");
+    FlipBuffer();
     gotoprt(0,1,"=============================================");
     gotoprt(3,3,"SELECT FACE COLOR POSITION");
     gotoprt(4,8,"UP COLOR          FRONT COLOR");
@@ -300,7 +326,7 @@ void SelectColorUF(){
 }
 
 void DrawMenu(){
-    system("cls");
+    FlipBuffer();
     gotoprt(0,1,"=============================================");
     gotoprt(10,3,"Menu");
     gotoprt(5,7,"Start : Press Space");
@@ -336,6 +362,7 @@ void StartGame(){
 int main(){
     CursorView();
     SetConsoleView();
+    InitDoubleBuffer();
     bool isStart=false;
     while(true){
         isStart=ReadyGame();

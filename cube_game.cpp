@@ -265,6 +265,10 @@ void OverflowCheck(){
     if(UP_COLOR>5)UP_COLOR=0;
     if(FRONT_COLOR>5)FRONT_COLOR=0;
 }
+int oppositeFace(int color){
+    int opp[6]={5,3,4,1,2,0};
+    return opp[color];
+}
 void SelectColorUF(){
     DrawSelectColorUF(0);
     int arrow=0;
@@ -280,20 +284,21 @@ void SelectColorUF(){
             arrow=0;
             DrawSelectColorUF(arrow);
         }
-        if(key==LEFT_KEY){
-            if(arrow) UP_COLOR--;
-            else FRONT_COLOR--;
+
+        if(key==LEFT_KEY || key==RIGHT_KEY){
+            int *target=arrow?&UP_COLOR:&FRONT_COLOR;
+            int dir=(key==LEFT_KEY?-1:1);
+            *target+=dir;
             OverflowCheck();
-            DrawSelectColorUF(arrow);
-        }
-        if(key==RIGHT_KEY){
-            if(arrow) UP_COLOR++;
-            else FRONT_COLOR++;
-            OverflowCheck();
+            while (UP_COLOR == FRONT_COLOR || oppositeFace(UP_COLOR) == FRONT_COLOR) {
+                *target += dir;
+                OverflowCheck();
+            }
             DrawSelectColorUF(arrow);
         }
     }
 }
+
 void DrawMenu(){
     system("cls");
     gotoprt(0,1,"=============================================");

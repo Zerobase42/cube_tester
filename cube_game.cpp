@@ -278,26 +278,11 @@ void DrawSelectColorUF(int arrow){
     // 선택 화살표
     if(arrow==1) gotoprt(0,9,">");
     else gotoprt(10,9,">");
-
-    // 색 박스 크기 상수
-    int boxWidth = 13;
-    int boxHeight = 3;
-
-    // ── UP FACE 박스
-    gotoprt(2,11,"+-------------+");
-    gotoprt(2,12,"|             |");
-    gotoprt(2,13,"+-------------+");
-    // 색 글자 중앙 정렬
     string upColor = cubeColor[UP_COLOR];
     while(upColor.size() < 11) upColor += " ";
     textcolor(ColortoInt(UP_COLOR));
     gotoprt(4,12,upColor);
     textcolor(WHITE);
-
-    // ── FRONT FACE 박스
-    gotoprt(12,11,"+-------------+");
-    gotoprt(12,12,"|             |");
-    gotoprt(12,13,"+-------------+");
     string frColor = cubeColor[FRONT_COLOR];
     while(frColor.size() < 11) frColor += " ";
     textcolor(ColortoInt(FRONT_COLOR));
@@ -311,7 +296,6 @@ void DrawSelectColorUF(int arrow){
     gotoprt(0,18,"=============================================");
     gotoprt(9,19,"by. 0B42");
 }
-
 void OverflowCheck(){
     if(UP_COLOR<0)UP_COLOR=5;
     if(FRONT_COLOR<0)FRONT_COLOR=5;
@@ -386,8 +370,6 @@ void SelectColorUF(){
             }
             continue;
         }
-
-        // 그 외 키는 무시하고 다시 루프
     }
 }
 
@@ -422,6 +404,7 @@ void StartMenu(){
 
 void StartGame(){
     StartMenu();
+    // SelectGame(); ( add a Bad Apple! )
     // game code to here
 }
 

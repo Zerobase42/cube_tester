@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include <cstdio>
 #pragma GCC optimize("unroll-loops")
 using namespace std;
 class Cube{
@@ -50,64 +50,65 @@ public:
         }
         rotate_face((34644>>(s*3))&7);
         if(s==4||s==5){
-            int tmp[]={2,9-s,3,s},tf=(s-4)*2;
-            for(int i=0;i<3;i++){
-                int t=cube[tmp[0]][tf][i];
-                for(int j=0;j<3;j++)cube[tmp[j]][tf][i]=cube[tmp[j+1]][tf][i];
-                cube[tmp[3]][tf][i]=t;
+            int ts[]={2,9-s,3,s},a=(s-4)*2;
+            for(int i=0,t;i<3;i++){
+                t=cube[ts[0]][a][i];
+                for(int j=0;j<3;j++)cube[ts[j]][a][i]=cube[ts[j+1]][a][i];
+                cube[ts[3]][a][i]=t;
             }
         }
-        if(s==1){
+        if (s == 1) {
             int C[3];
-            for(int i=0;i<3;i++)C[i]=cube[0][2][i];
-
-            for(int i=0;i<3;i++){
+            for (int i=0;i<3;i++)C[i]=cube[0][2][i];
+            for (int i=0;i<3;i++)
                 cube[0][2][i]=cube[4][2-i][2];
+            for (int i=0;i<3;i++)
                 cube[4][i][2]=cube[1][0][i];
+            for (int i=0;i<3;i++)
                 cube[1][0][i]=cube[5][2-i][0];
+            for (int i=0;i<3;i++)
                 cube[5][i][0]=C[2-i];
+        }
+
+        if(s==3){
+            int C[3];
+            for(int i=0;i<3;i++)C[i]=cube[0][0][i];
+        
+            for(int i=0;i<3;i++){
+                cube[0][0][i]=cube[5][i][2];
+                cube[5][i][2]=cube[1][2][2-i];
+                cube[1][2][i]=cube[4][i][0];
+                cube[4][2-i][0]=C[i];
             }
         }
-
-    if(s==3){
-        int C[3];
-        for(int i=0;i<3;i++)C[i]=cube[0][0][i];
-
-        for(int i=0;i<3;i++){
-            cube[0][0][i]=cube[5][i][2];
-            cube[5][i][2]=cube[1][2][2-i];
-            cube[1][2][i]=cube[4][i][0];
-            cube[4][2-i][0]=C[i];
+        if(s==0){
+            int C[3];
+            for(int i=0;i<3;i++)
+                C[i]=cube[0][i][0];
+            cube[0][2][0]=cube[3][0][2];
+            cube[0][1][0]=cube[3][1][2];
+            cube[0][0][0]=cube[3][2][2];
+            cube[3][0][2]=cube[1][2][0];
+            cube[3][1][2]=cube[1][1][0];
+            cube[3][2][2]=cube[1][0][0];
+            cube[1][0][0]=cube[2][0][0];
+            cube[1][1][0]=cube[2][1][0];
+            cube[1][2][0]=cube[2][2][0];
+            for(int i=0;i<3;i++)cube[2][i][0]=C[i];
         }
-    }
-    if(s==0){
-        int C[3];
-        for(int i=0;i<3;i++)
-            C[i]=cube[0][i][0];
-        cube[0][2][0]=cube[3][0][2];
-        cube[0][1][0]=cube[3][1][2];
-        cube[0][0][0]=cube[3][2][2];
-        cube[3][0][2]=cube[1][2][0];
-        cube[3][1][2]=cube[1][1][0];
-        cube[3][2][2]=cube[1][0][0];
-        cube[1][0][0]=cube[2][0][0];
-        cube[1][1][0]=cube[2][1][0];
-        cube[1][2][0]=cube[2][2][0];
-        for(int i=0;i<3;i++)cube[2][i][0]=C[i];
-    }
-    if(s==2){
-        int C[3];
-        for(int i=0;i<3;i++)
-            C[i]=cube[0][i][2];
-        for(int i=0;i<3;i++)
-            cube[0][i][2]=cube[2][i][2];
-        for(int i=0;i<3;i++)
-            cube[2][i][2]=cube[1][i][2];
-        for(int i=0;i<3;i++)
-            cube[1][i][2]=cube[3][2-i][0];
-        for(int i=0;i<3;i++)
-            cube[3][i][0]=C[2-i];
-        }
+        if(s==2){
+            int C[3];
+            for(int i=0;i<3;i++)
+                C[i]=cube[0][i][2];
+            for(int i=0;i<3;i++)
+                cube[0][i][2]=cube[2][i][2];
+            for(int i=0;i<3;i++)
+                cube[2][i][2]=cube[1][i][2];
+            for(int i=0;i<3;i++)
+                cube[1][i][2]=cube[3][2-i][0];
+            for(int i=0;i<3;i++)
+                cube[3][i][0]=C[2-i];
+            }
     }
 };
 int main(){

@@ -57,29 +57,31 @@ public:
                 cube[ts[3]][a][i]=t;
             }
         }
-        if (s == 1) {
+        if(s==1){
             int C[3];
-            for (int i=0;i<3;i++)C[i]=cube[0][2][i];
-            for (int i=0;i<3;i++)
+            for(int i=0;i<3;i++)
+                C[i]=cube[0][2][i];
+            for(int i=0;i<3;i++)
                 cube[0][2][i]=cube[4][2-i][2];
-            for (int i=0;i<3;i++)
+            for(int i=0;i<3;i++)
                 cube[4][i][2]=cube[1][0][i];
-            for (int i=0;i<3;i++)
+            for(int i=0;i<3;i++)
                 cube[1][0][i]=cube[5][2-i][0];
-            for (int i=0;i<3;i++)
-                cube[5][i][0]=C[2-i];
+            for(int i=0;i<3;i++)
+                cube[5][i][0]=C[i];
         }
-
         if(s==3){
             int C[3];
-            for(int i=0;i<3;i++)C[i]=cube[0][0][i];
-        
-            for(int i=0;i<3;i++){
+            for(int i=0;i<3;i++)
+                C[i]=cube[0][0][i];
+            for(int i=0;i<3;i++)
                 cube[0][0][i]=cube[5][i][2];
+            for(int i=0;i<3;i++)
                 cube[5][i][2]=cube[1][2][2-i];
-                cube[1][2][i]=cube[4][i][0];
+            for(int i=0;i<3;i++)
+                cube[1][2][2-i]=cube[4][2-i][0];
+            for(int i=0;i<3;i++)
                 cube[4][2-i][0]=C[i];
-            }
         }
         if(s==0){
             int C[3];
@@ -107,8 +109,8 @@ public:
             for(int i=0;i<3;i++)
                 cube[1][i][2]=cube[3][2-i][0];
             for(int i=0;i<3;i++)
-                cube[3][i][0]=C[2-i];
-            }
+                cube[3][2-i][0]=C[i];
+        }
     }
 };
 int main(){

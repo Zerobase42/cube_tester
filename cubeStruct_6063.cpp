@@ -58,16 +58,16 @@ public:
             }
         }
         if(s==1){
-        int C[3];
-        for(int i=0;i<3;i++)C[i]=cube[0][2][i];
+            int C[3];
+            for(int i=0;i<3;i++)C[i]=cube[0][2][i];
 
-        for(int i=0;i<3;i++){
-            cube[0][2][i]=cube[4][2-i][2];
-            cube[4][i][2]=cube[1][0][i];
-            cube[1][0][i]=cube[5][2-i][0];
-            cube[5][i][0]=C[2-i];
+            for(int i=0;i<3;i++){
+                cube[0][2][i]=cube[4][2-i][2];
+                cube[4][i][2]=cube[1][0][i];
+                cube[1][0][i]=cube[5][2-i][0];
+                cube[5][i][0]=C[2-i];
+            }
         }
-    }
 
     if(s==3){
         int C[3];
@@ -80,33 +80,33 @@ public:
             cube[4][2-i][0]=C[i];
         }
     }
-        if(s==0){
-            int C[3];
-            for(int i=0;i<3;i++)
-                C[i]=cube[0][i][0];
-            cube[0][2][0]=cube[3][0][2];
-            cube[0][1][0]=cube[3][1][2];
-            cube[0][0][0]=cube[3][2][2];
-            cube[3][0][2]=cube[1][2][0];
-            cube[3][1][2]=cube[1][1][0];
-            cube[3][2][2]=cube[1][0][0];
-            cube[1][0][0]=cube[2][0][0];
-            cube[1][1][0]=cube[2][1][0];
-            cube[1][2][0]=cube[2][2][0];
-            for(int i=0;i<3;i++)cube[2][i][0]=C[i];
-        }
-        if(s==2){
-            int C[3];
-            for(int i=0;i<3;i++)
-                C[i]=cube[0][i][2];
-            for(int i=0;i<3;i++)
-                cube[0][i][2]=cube[2][i][2];
-            for(int i=0;i<3;i++)
-                cube[2][i][2]=cube[1][i][2];
-            for(int i=0;i<3;i++)
-                cube[1][i][2]=cube[3][2-i][0];
-            for(int i=0;i<3;i++)
-                cube[3][i][0]=C[2-i];
+    if(s==0){
+        int C[3];
+        for(int i=0;i<3;i++)
+            C[i]=cube[0][i][0];
+        cube[0][2][0]=cube[3][0][2];
+        cube[0][1][0]=cube[3][1][2];
+        cube[0][0][0]=cube[3][2][2];
+        cube[3][0][2]=cube[1][2][0];
+        cube[3][1][2]=cube[1][1][0];
+        cube[3][2][2]=cube[1][0][0];
+        cube[1][0][0]=cube[2][0][0];
+        cube[1][1][0]=cube[2][1][0];
+        cube[1][2][0]=cube[2][2][0];
+        for(int i=0;i<3;i++)cube[2][i][0]=C[i];
+    }
+    if(s==2){
+        int C[3];
+        for(int i=0;i<3;i++)
+            C[i]=cube[0][i][2];
+        for(int i=0;i<3;i++)
+            cube[0][i][2]=cube[2][i][2];
+        for(int i=0;i<3;i++)
+            cube[2][i][2]=cube[1][i][2];
+        for(int i=0;i<3;i++)
+            cube[1][i][2]=cube[3][2-i][0];
+        for(int i=0;i<3;i++)
+            cube[3][i][0]=C[2-i];
         }
     }
 };

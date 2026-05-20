@@ -50,7 +50,7 @@ public:
         }
         rotate_face((34644>>(s*3))&7);
         if(s==4||s==5){
-            int tmp[]={2,9-s,3,s};
+            int tmp[]={2,9-s,3,s},tf=(s-4)*2;
             for(int i=0;i<3;i++){
                 int t=cube[tmp[0]][tf][i];
                 for(int j=0;j<3;j++)cube[tmp[j]][tf][i]=cube[tmp[j+1]][tf][i];

@@ -53,7 +53,7 @@ public:
         }
         rotate_face((34644>>(s*3))&7);
         if(s==4||s==5){
-            int ts[]={2,9-s,3,s},a=(s-4)*2;
+            int ts[]={2,9-s,3,s},a=(s-4)<<1;
             for(int i=0,t;i<3;i++){
                 t=cube[ts[0]][a][i];
                 for(int j=0;j<3;j++)cube[ts[j]][a][i]=cube[ts[j+1]][a][i];
@@ -62,18 +62,18 @@ public:
         }
         if(s==1||s==3){
             int C[3],t=s>>1;
-            int t1[2]={0,2},t2[2]={4,5};
-            int t3[2][3]={{0,1,2},{2,1,0}};
-            for(int i=0;i<3;i++)
+            static const int t1[2]={0,2},t2[2]={4,5},t3[2][3]={{0,1,2},{2,1,0}};
+            const int *p=t3[t],*q=t3[t^1];
+            for(int i=0;i<3;i++){
                 C[i]=cube[0][t1[t^1]][i];
+                cube[0][t1[t^1]][i]=cube[t2[t]][q[i]][2];
+            }
+            for(int i=0;i<3;i++){
+                cube[t2[t]][i][2]=cube[1][t1[t]][p[i]];
+                cube[1][t1[t]][p[i]]=cube[t2[t^1]][2-i][0];
+            }
             for(int i=0;i<3;i++)
-                cube[0][t1[t^1]][i]=cube[t2[t]][t3[t^1][i]][2];
-            for(int i=0;i<3;i++)
-                cube[t2[t]][i][2]=cube[1][t1[t]][t3[t][i]];
-            for(int i=0;i<3;i++)
-                cube[1][t1[t]][t3[t][i]]=cube[t2[t^1]][2-i][0];
-            for(int i=0;i<3;i++)
-                cube[t2[t^1]][t3[t][i]][0]=C[i];
+                cube[t2[t^1]][p[i]][0]=C[i];
         }
         if(s==0){
             int C[3];

@@ -4,9 +4,12 @@ using namespace std;
 class Cube{
 public:
     char cube[6][3][3];
+private:
+    const char* color="wyrogb";
+    const int ord[4]={4,2,5,3};
+public:
     void read_cube(){
         for(int i=0;i<3;i++)for(int j=0;j<3;j++)scanf(" %c",&cube[0][i][j]);
-        int ord[4]={4,2,5,3};
         for(int i=0;i<3;i++){
             for(int k=0;k<4;k++){
                 int f=ord[k];
@@ -21,7 +24,6 @@ public:
             for(int j=0;j<3;j++)printf("%c ",cube[0][i][j]);
             puts("");
         }
-        int ord[4]={4,2,5,3};
         for(int i=0;i<3;i++){
             for(int k=0;k<4;k++){
                 int f=ord[k];
@@ -59,17 +61,17 @@ public:
             }
         }
         if(s==1||s==3){
-            int C[3],tmp[]={s==1?2:0,s==1?4:5};
+            int C[3];const int tmp[]={s-1,(s+7)>>1};
             for(int i=0;i<3;i++)
-                C[i]=cube[0][tmp[0]][i];
+                C[i]=cube[0][2-tmp[0]][i];
             for(int i=0;i<3;i++)
-                cube[0][tmp[0]][i]=cube[tmp[1]][s==1?2-i:i][2];
+                cube[0][2-tmp[0]][i]=cube[tmp[1]][s==1?2-i:i][2];
             for(int i=0;i<3;i++)
-                cube[tmp[1]][i][2]=cube[1][s==1?0:2][s==1?i:2-i];
+                cube[tmp[1]][i][2]=cube[1][tmp[0]][s==1?i:2-i];
             for(int i=0;i<3;i++)
-                cube[1][s==1?0:2][s==1?i:2-i]=cube[s==1?5:4][2-i][0];
+                cube[1][tmp[0]][s==1?i:2-i]=cube[9-tmp[1]][2-i][0];
             for(int i=0;i<3;i++)
-                cube[s==1?5:4][s==1?i:2-i][0]=C[i];
+                cube[9-tmp[1]][s==1?i:2-i][0]=C[i];
         }
         if(s==0){
             int C[3];

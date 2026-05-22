@@ -53,11 +53,13 @@ public:
         }
         rotate_face((34644>>(s*3))&7);
         if(s==4||s==5){
-            int ts[]={2,9-s,3,s},a=(s-4)<<1;
+            int a=(s-4)<<1;
+            const int ts[2][4]={{2,5,3,4},{2,4,3,5}};
+            const int *p=ts[s-4];
             for(int i=0,t;i<3;i++){
-                t=cube[ts[0]][a][i];
-                for(int j=0;j<3;j++)cube[ts[j]][a][i]=cube[ts[j+1]][a][i];
-                cube[ts[3]][a][i]=t;
+                t=cube[p[0]][a][i];
+                for(int j=0;j<3;j++)cube[p[j]][a][i]=cube[p[j+1]][a][i];
+                cube[p[3]][a][i]=t;
             }
         }
         if(s==1||s==3){

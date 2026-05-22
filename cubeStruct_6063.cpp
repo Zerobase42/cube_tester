@@ -61,17 +61,19 @@ public:
             }
         }
         if(s==1||s==3){
-            int C[3];const int tmp[]={s-1,(s+7)>>1};
+            int C[3],t=s>>1;
+            int t1[2]={0,2},t2[2]={4,5};
+            int t3[2][3]={{0,1,2},{2,1,0}};
             for(int i=0;i<3;i++)
-                C[i]=cube[0][2-tmp[0]][i];
+                C[i]=cube[0][t1[t^1]][i];
             for(int i=0;i<3;i++)
-                cube[0][2-tmp[0]][i]=cube[tmp[1]][s==1?2-i:i][2];
+                cube[0][t1[t^1]][i]=cube[t2[t]][t3[t^1][i]][2];
             for(int i=0;i<3;i++)
-                cube[tmp[1]][i][2]=cube[1][tmp[0]][s==1?i:2-i];
+                cube[t2[t]][i][2]=cube[1][t1[t]][t3[t][i]];
             for(int i=0;i<3;i++)
-                cube[1][tmp[0]][s==1?i:2-i]=cube[9-tmp[1]][2-i][0];
+                cube[1][t1[t]][t3[t][i]]=cube[t2[t^1]][2-i][0];
             for(int i=0;i<3;i++)
-                cube[9-tmp[1]][s==1?i:2-i][0]=C[i];
+                cube[t2[t^1]][t3[t][i]][0]=C[i];
         }
         if(s==0){
             int C[3];

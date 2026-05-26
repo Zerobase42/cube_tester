@@ -5,8 +5,8 @@ class Cube{
 public:
     char cube[6][3][3];
 private:
-    const char* color="wyrogb";
-    const int ord[4]={4,2,5,3};
+    static const char* color="wyrogb";
+    static const int ord[4]={4,2,5,3};
 public:
     void read_cube(){
         for(int i=0;i<3;i++)for(int j=0;j<3;j++)scanf(" %c",&cube[0][i][j]);
@@ -62,11 +62,12 @@ public:
                 cube[p[3]][a][i]=t;
             }
         }
-        const int ri[2][3]={{0,1,2},{2,1,0}};
+        static const int ri[2][3]={{0,1,2},{2,1,0}};
+        static constexpr int *p,*q;
         if(s==1||s==3){
             int C[3],t=s>>1;
-            static const int t1[2]={0,2},t2[2]={4,5};
-            const int *p=ri[t],*q=ri[t^1];
+            static constexpr int t1[2]={0,2},t2[2]={4,5};
+            *p=ri[t],*q=ri[t^1];
             for(int i=0;i<3;i++){
                 C[i]=cube[0][t1[t^1]][i];
                 cube[0][t1[t^1]][i]=cube[t2[t]][q[i]][2];
@@ -80,13 +81,17 @@ public:
         }
         if(s==0||s==2){
             int C[3],t=s>>1;
-            const int t3[]={2,3};
-            const int *p=ri[t],*q=ri[t^1];
-            for(int i=0;i<3;i++)C[i]=cube[0][i][s];
-            for(int i=0;i<3;i++)cube[0][i][s]=cube[t3[t^1]][q[i]][2];
+            static constexpr int t3[]={2,3};
+            *p=ri[t],*q=ri[t^1];
+            for(int i=0;i<3;i++){
+                C[i]=cube[0][i][s];
+                cube[0][i][s]=cube[t3[t^1]][q[i]][2];
+            }
             for(int i=0;i<3;i++)cube[t3[t^1]][i][2]=cube[1][q[i]][s];
-            for(int i=0;i<3;i++)cube[1][i][s]=cube[t3[t]][p[i]][0];
-            for(int i=0;i<3;i++)cube[t3[t]][p[i]][0]=C[i];
+            for(int i=0;i<3;i++){
+                cube[1][i][s]=cube[t3[t]][p[i]][0];
+                cube[t3[t]][p[i]][0]=C[i];
+            }
         }
     }
 };

@@ -62,10 +62,11 @@ public:
                 cube[p[3]][a][i]=t;
             }
         }
+        const int ri[2][3]={{0,1,2},{2,1,0}};
         if(s==1||s==3){
             int C[3],t=s>>1;
-            static const int t1[2]={0,2},t2[2]={4,5},t3[2][3]={{0,1,2},{2,1,0}};
-            const int *p=t3[t],*q=t3[t^1];
+            static const int t1[2]={0,2},t2[2]={4,5};
+            const int *p=ri[t],*q=ri[t^1];
             for(int i=0;i<3;i++){
                 C[i]=cube[0][t1[t^1]][i];
                 cube[0][t1[t^1]][i]=cube[t2[t]][q[i]][2];
@@ -77,31 +78,15 @@ public:
             for(int i=0;i<3;i++)
                 cube[t2[t^1]][p[i]][0]=C[i];
         }
-        if(s==0){
-            int C[3];
-            for(int i=0;i<3;i++)
-                C[i]=cube[0][i][0];
-            for(int i=0;i<3;i++)
-                cube[0][i][0]=cube[3][2-i][2];
-            for(int i=0;i<3;i++)
-                cube[3][i][2]=cube[1][2-i][0];
-            for(int i=0;i<3;i++)
-                cube[1][i][0]=cube[2][i][0];
-            for(int i=0;i<3;i++)
-                cube[2][i][0]=C[i];
-        }
-        if(s==2){
-            int C[3];
-            for(int i=0;i<3;i++)
-                C[i]=cube[0][i][2];
-            for(int i=0;i<3;i++)
-                cube[0][i][2]=cube[2][i][2];
-            for(int i=0;i<3;i++)
-                cube[2][i][2]=cube[1][i][2];
-            for(int i=0;i<3;i++)
-                cube[1][i][2]=cube[3][2-i][0];
-            for(int i=0;i<3;i++)
-                cube[3][2-i][0]=C[i];
+        if(s==0||s==2){
+            int C[3],t=s>>1;
+            const int t3[]={2,3};
+            const int *p=ri[t],*q=ri[t^1];
+            for(int i=0;i<3;i++)C[i]=cube[0][i][s];
+            for(int i=0;i<3;i++)cube[0][i][s]=cube[t3[t^1]][q[i]][2];
+            for(int i=0;i<3;i++)cube[t3[t^1]][i][2]=cube[1][q[i]][s];
+            for(int i=0;i<3;i++)cube[1][i][s]=cube[t3[t]][p[i]][0];
+            for(int i=0;i<3;i++)cube[t3[t]][p[i]][0]=C[i];
         }
     }
 };

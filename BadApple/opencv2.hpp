@@ -27,22 +27,6 @@
 #endif
 /*...*/
 #define CV_EXPORTS_W CV_EXPORTS
-// CV__DEBUG_NS_END
-#if !defined CV_DOXYGEN && !defined CV_IGNORE_DEBUG_BUILD_GUARD
-#if (defined(_MSC_VER) && (defined(DEBUG) || defined(_DEBUG))) || \
-    (defined(_GLIBCXX_DEBUG) || defined(_GLIBCXX_DEBUG_PEDANTIC))
-// Guard to prevent using of binary incompatible binaries / runtimes
-// https://github.com/opencv/opencv/pull/9161
-#define CV__DEBUG_NS_BEGIN namespace debug_build_guard {
-#define CV__DEBUG_NS_END }
-namespace cv { namespace debug_build_guard { } using namespace debug_build_guard; }
-#endif
-#endif
-
-#ifndef CV__DEBUG_NS_BEGIN
-#define CV__DEBUG_NS_BEGIN
-#define CV__DEBUG_NS_END
-#endif
 
 // InputArray, OutputArray => <opencv2/core/mat.hpp>
 class CV_EXPORTS _InputArray
@@ -307,7 +291,6 @@ template<typename _Tp> static inline _OutputArray rawOut(_Tp& v);
 /** Helper to wrap custom types. @see InputArray */
 template<typename _Tp> static inline _InputOutputArray rawInOut(_Tp& v);
 
-CV__DEBUG_NS_END
 
 typedef const _InputArray& InputArray;
 typedef InputArray InputArrayOfArrays;
@@ -318,6 +301,7 @@ typedef InputOutputArray InputOutputArrayOfArrays;
 
 
 namespace cv{
+    // <opencv2/imgproc.hpp> -> cv::resize
     CV_EXPORTS_W void resize( InputArray src, OutputArray dst,
                           Size dsize, double fx = 0, double fy = 0,
                           int interpolation = INTER_LINEAR );

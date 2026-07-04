@@ -34,6 +34,7 @@ CHS = len(CH_LIST) - 1
 lut = np.array(list(CH_LIST))
 
 os.system("cls")
+start_time=time.time()
 with open("bad_apple.txt", "r", encoding="ascii") as f:
     for line in f:
         gray=decode_frame(line)
@@ -49,4 +50,11 @@ with open("bad_apple.txt", "r", encoding="ascii") as f:
             end = start + WIDTH
 
             print(''.join(chars[start:end]))
-        time.sleep(1/30)
+        time.sleep(0.033)
+
+end_time=time.time()
+
+running_time=end_time-start_time
+
+print(running_time)
+# 3:39.12

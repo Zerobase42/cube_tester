@@ -5,6 +5,8 @@ import os
 import numpy as np
 import ctypes
 
+os.system("mode con: cols=120 lines=45")
+
 STD_OUTPUT_HANDLE = -11
 
 hOut = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
@@ -28,14 +30,19 @@ def decode_frame(line):
 
     return np.frombuffer(data, dtype=np.uint8)
 
-with open("chars.txt", "r", encoding="utf-8") as f:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+chars_path = os.path.join(BASE_DIR, "chars.txt")
+
+with open(chars_path, "r", encoding="utf-8") as f:
     CH_LIST = f.read().rstrip("\n")
 CHS = len(CH_LIST) - 1
 lut = np.array(list(CH_LIST))
 
 os.system("cls")
 start_time=time.time()
-with open("bad_apple.txt", "r", encoding="ascii") as f:
+
+badapple_path = os.path.join(BASE_DIR, "bad_apple.txt")
+with open(badapple_path, "r", encoding="ascii") as f:
     for line in f:
         gray=decode_frame(line)
 
@@ -57,4 +64,4 @@ end_time=time.time()
 running_time=end_time-start_time
 
 print(running_time)
-# 3:39.12
+# 3:39.12=219.12

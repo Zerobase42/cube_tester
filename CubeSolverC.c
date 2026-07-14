@@ -15,13 +15,34 @@
 #include <unistd.h>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
-#define queue(name, size) int name[size], name##_front = 0, name##_rear = 0
-#define pushQ(name, val) (name[name##_rear++] = (val))
-#define popQ(name) (name[name##_front++])
-#define frontQ(name) (name[name##_front])
-#define emptyQ(name) (name##_front == name##_rear)
-#define sizeQ(name) (name##_rear - name##_front)
-#define delQ(name)
+typedef struct{
+    int*buf;
+    int front;
+    int rear;
+}queue;
+queue*initQ(int size){
+    queue*q=(queue*)malloc(sizeof(queue));
+    q->buf=(int*)malloc(sizeof(int)*size);
+    q->front=0;
+    q->rear=0;
+    return q;
+}
+void delQ(queue*q){
+    free(q->buf);
+    free(q);
+}
+int emptyQ(const queue*q){
+    return q->front==q->rear;
+}
+void pushQ(queue*q,int x){
+    q->buf[q->rear++]=x;
+}
+int popQ(queue*q){
+    return q->buf[q->front++];
+}
+int frontQ(const queue*q){
+    return q->buf[q->front];
+}
 #define byte unsigned char
 #define swapByte(a,b){byte t=(a);a=(b);b=t;}
 const byte __ord[54]={0,1,2,3,4,5,6,7,8,36,37,38,9,10,11,18,19,20,27,28,29,39,40,41,12,13,14,21,22,23,30,31,32,42,43,44,15,16,17,24,25,26,33,34,35,45,46,47,48,49,50,51,52,53};
@@ -102,15 +123,17 @@ static inline void printCube(const stCube*cube){
     fwrite(wbuf,1,144,stdout);
 #endif
 }
+
 unsigned short p1_back[2048];
 const byte p1_edge[11][2]={{1,28},{37,3},{19,5},{7,10},{41,12},{21,14},{23,30},{39,32},{46,16},{43,48},{25,50}};
 void p1_precalc(){
-    queue(q,2048);
+    queue*q=initQ(2048);
     pushQ(q,0);
     p1_back[0]=-1;
     while(!emptyQ(q)){
         int f=popQ(q);
         stCube cube;
+        memset(&cube,0,sizeof(cube));
         int sum=0;
         for(int j=0;j<11;++j){
             byte a=p1_edge[10-j][0],b=p1_edge[10-j][1];
@@ -127,7 +150,7 @@ void p1_precalc(){
                     nv=(nv<<1)|!cube.arr[p1_edge[i][0]];
                 }
                 if(!p1_back[nv]){
-                    p1_back[nv]=((1*3+3-j)<<11)|f;
+                    p1_back[nv]=((i*3+3-j)<<11)|f;
                     pushQ(q,nv);
                 }
             }
@@ -177,6 +200,7 @@ void p2_precalc_c(){
     for(int i=0;i<2187;++i){
         int f=p2_cl[i];
         stCube nc;
+        memset(&nc,0,sizeof(nc));
         int sum=0;
         for(int j=0;j<7;++j){
             int stat=(f>>(j<<1))&3;
@@ -251,6 +275,7 @@ void p2_precalc_e(){
     for(int i=0;i<495;++i){
         int f=p2_el[i];
         stCube nc;
+        memset(&nc,0,sizeof(nc));
         for(int j=0;j<12;++j){
             byte idx=p2_edge[11-j][0];
             nc.arr[idx]=(f>>j)&1;
@@ -270,7 +295,7 @@ void p2_precalc_e(){
             for(int k=0;k<3;++k){
                 turnCube(&nc,j*3);
                 int up=j*3+k-2;
-                if(!p2_oTble[i][up]){
+                if(!p2_eTble[i][up]){
                     int r=0;
                     for(int i=0;i<12;i++){
                         r=(r<<1)|(!!nc.arr[p2_edge[i][0]]);
@@ -298,13 +323,13 @@ void p2_precalc_e(){
 void p2_precalc(){
     p2_precalc_c();
     p2_precalc_e();
-    queue(q,1119744);
+    queue*q=initQ(1119744);
     pushQ(q,0);
     p2_back[0]=-1;
     const int op_sz=14;
     while(!emptyQ(q)){
         const int f=popQ(q);
-        int c=(f>>9)&4095,e=f&511;
+        int c=f>>9,e=f&511;// c=(f>>9)&4095
         for(int i=0;i<op_sz;++i){
             const int op=p2_op[i];
             int nc=p2_oTble[c][i],ne=p2_eTble[e][i];
@@ -343,6 +368,7 @@ int p2_solve(stCube*cube,int*res){
 }
 
 
+
 int main(){
     p1_precalc();
     p2_precalc();
@@ -352,7 +378,11 @@ int main(){
     readCube(&cube);
 
     len=p1_solve(&cube,code);
+    for(int i=0;i<len;i++)
+        turnCube(&cube,code[i]);
     len=p2_solve(&cube,code+len);
-
+    for(int i=0;i<len;i++)
+        turnCube(&cube,code[i]);
+    
     printCube(&cube);
 }

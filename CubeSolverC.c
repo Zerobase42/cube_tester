@@ -87,6 +87,7 @@ static inline void turnCube(stCube*cube,byte x){
         case 3:il=u3;break;
         case 4:il=u4;break;
         case 5:il=u5;break;
+        default:return;
     }
     switch(r){
         case 0:__cw_turn(cube,il);break;
@@ -110,7 +111,7 @@ static inline void readCube(stCube*cube){
 static inline void printCube(const stCube*cube){
     static char wbuf[144];
     memset(wbuf,' ',sizeof(wbuf));
-    char i=0,p=6;
+    byte i=0,p=6;
     for(int a=0;a<54;a++){
         wbuf[p++]=cube->arr[__ord[a]];
         ++i;p++;

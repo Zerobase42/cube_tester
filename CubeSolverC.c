@@ -44,12 +44,12 @@ static inline int frontQ(const queue*q){
     return q->buf[q->front];
 }
 #define byte unsigned char
-#define swapByte(a,b){byte t=(a);a=(b);b=t;}
+#define swapByte(a,b){register byte t=(a);a=(b);b=t;}
 const byte __ord[54]={0,1,2,3,4,5,6,7,8,36,37,38,9,10,11,18,19,20,27,28,29,39,40,41,12,13,14,21,22,23,30,31,32,42,43,44,15,16,17,24,25,26,33,34,35,45,46,47,48,49,50,51,52,53};
 typedef struct{byte arr[54];}stCube;
 static inline void __cw_turn(stCube*cube,const byte*pos){
     for(int i=0;i<20;i+=4){
-        byte t=cube->arr[pos[i]];
+        register byte t=cube->arr[pos[i]];
         cube->arr[pos[i]]=cube->arr[pos[i+3]];
         cube->arr[pos[i+3]]=cube->arr[pos[i+2]];
         cube->arr[pos[i+2]]=cube->arr[pos[i+1]];
@@ -58,7 +58,7 @@ static inline void __cw_turn(stCube*cube,const byte*pos){
 };
 static inline void __ccw_turn(stCube*cube,const byte*pos){
     for(int i=0;i<20;i+=4){
-        byte t=cube->arr[pos[i]];
+        register byte t=cube->arr[pos[i]];
         cube->arr[pos[i]]=cube->arr[pos[i+1]];
         cube->arr[pos[i+1]]=cube->arr[pos[i+2]];
         cube->arr[pos[i+2]]=cube->arr[pos[i+3]];
@@ -124,6 +124,28 @@ static inline void printCube(const stCube*cube){
     fwrite(wbuf,1,144,stdout);
 #endif
 }
+
+static byte next_permutation_int(int*arr,int n){
+    if(n<=1)return 0;
+    int i=n-2,tmp;
+    while(i>=0&&arr[i]>=arr[i+1])--i;
+    if(i<0){
+        for(int lo=0,hi=n-1;lo<hi;++lo,--hi){
+            tmp=arr[lo];arr[lo]=arr[hi];arr[hi]=tmp;
+        }
+        return 1;
+    }
+    int j=n-1;
+    while(arr[j]<=arr[i])--j;
+    tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
+    for(int lo=i+1,hi=n-1;lo<hi;++lo,--hi){
+        int t=arr[lo];
+        arr[lo]=arr[hi];
+        arr[hi]=t;
+    }
+    return 1;
+}
+
 unsigned short p1_back[2048];
 const byte p1_edge[11][2]={{1,28},{37,3},{19,5},{7,10},{41,12},{21,14},{23,30},{39,32},{46,16},{43,48},{25,50}};
 void p1_precalc(){
@@ -180,8 +202,7 @@ int p1_solve(const stCube*cube,int*res){
 const byte p2_op[14]={1,3,4,5,6,7,8,9,10,11,12,13,14,16};
 const byte p2_corner[7][3]={{18,8,11},{20,27,2},{24,17,47},{26,53,33},{36,0,29},{38,9,6},{42,35,51}};
 const byte p2_edge[12][2]={{37,3},{19,5},{41,12},{21,14},{23,30},{39,32},{43,48},{25,50},{1,28},{7,10},{46,16},{52,34}};
-unsigned short p2_cs[16384],p2_cl[2187],p2_oTble[2187][14];
-unsigned short p2_es[4096],p2_el[495],p2_eTble[495][14];
+unsigned short p2_cs[16384],p2_cl[2187],p2_oTble[2187][14],p2_es[4096],p2_el[495],p2_eTble[495][14];
 unsigned int p2_back[1119744];
 void p2_precalc_c(){
     {
@@ -364,11 +385,10 @@ int p2_solve(stCube*cube,int*res){
     return cnt;
 }
 const byte p3_op[10]={1,4,6,7,8,10,12,13,14,16};
-const byte p3_corner[8][3]={{18,8,11},{26,53,33},{36,0,29},{44,45,15},{20,27,2},{24,17,47},{38,9,6},{42,35,51}};
+const byte p34_corner[8][3]={{18,8,11},{26,53,33},{36,0,29},{44,45,15},{20,27,2},{24,17,47},{38,9,6},{42,35,51}};
 const byte p3_edge[8][2]={{41,12},{21,14},{23,30},{39,32},{37,3},{19,5},{43,48},{25,50}};
-unsigned short p3_ps[256],p3_pl[70];
+unsigned short p3_ps[256],p3_pl[70],p3_prs[524288],p3_cTble[40320][10],p3_eTble[70][10];
 unsigned int p3_prl[40320],p3_back[2822400];
-unsigned short p3_prs[524288],p3_cTble[40320][10],p3_eTble[70][10];
 void p3_precalc_pi(){
     if(p3_pl[0]==15)return;
     int arr[4]={0,1,2,3};
@@ -387,26 +407,6 @@ void p3_precalc_pi(){
             arr[3]=arr[2]+1;
         }else++arr[3];
     }
-}
-static byte next_permutation_int(int*arr,int n){
-    if(n<=1)return 0;
-    int i=n-2,tmp;
-    while(i>=0&&arr[i]>=arr[i+1])--i;
-    if(i<0){
-        for(int lo=0,hi=n-1;lo<hi;++lo,--hi){
-            tmp=arr[lo];arr[lo]=arr[hi];arr[hi]=tmp;
-        }
-        return 1;
-    }
-    int j=n-1;
-    while(arr[j]<=arr[i])--j;
-    tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
-    for(int lo=i+1,hi=n-1;lo<hi;++lo,--hi){
-        int t=arr[lo];
-        arr[lo]=arr[hi];
-        arr[hi]=t;
-    }
-    return 1;
 }
 void p3_precalc_pr(){
     p3_precalc_pi();
@@ -429,7 +429,7 @@ void p3_preclac_o(){
         stCube nc;
         memset(&nc,0,sizeof(nc));
         for(int j=0;j<8;++j){
-            nc.arr[p3_corner[7-j][0]]=(f>>(j*3))&7;
+            nc.arr[p34_corner[7-j][0]]=(f>>(j*3))&7;
         }
         int oidx=0;
         for(int j=0;j<6;++j){
@@ -439,9 +439,9 @@ void p3_preclac_o(){
                     if(!p3_cTble[i][oidx]){
                         int r=0;
                         for(int i=0;i<6;++i){
-                            r=(r<<3)|nc.arr[p3_corner[i][0]];
+                            r=(r<<3)|nc.arr[p34_corner[i][0]];
                         }
-                        r=(r<<1)|(nc.arr[p3_corner[6][0]]>nc.arr[p3_corner[7][0]]);
+                        r=(r<<1)|(nc.arr[p34_corner[6][0]]>nc.arr[p34_corner[7][0]]);
                         int f=p3_prs[r];
                         p3_cTble[i][oidx]=f;
                         p3_cTble[f][oidx&1?oidx:((oidx-2)^2)+2]=i;
@@ -454,9 +454,9 @@ void p3_preclac_o(){
                     turnCube(&nc,j*3+1);
                     int r=0;
                     for(int i=0;i<6;++i){
-                        r=(r<<3)|nc.arr[p3_corner[i][0]];
+                        r=(r<<3)|nc.arr[p34_corner[i][0]];
                     }
-                    r=(r<<1)|(nc.arr[p3_corner[6][0]]>nc.arr[p3_corner[7][0]]);
+                    r=(r<<1)|(nc.arr[p34_corner[6][0]]>nc.arr[p34_corner[7][0]]);
                     int f=p3_prs[r];
                     p3_cTble[i][oidx]=f;
                     p3_cTble[f][oidx]=i;
@@ -575,7 +575,7 @@ int p3_solve(stCube*cube,int*res){
     int c=0;
     int co[8];
     for(int i=0;i<8;i++){
-        const byte a=p3_corner[i][0],b=p3_corner[i][1],c=p3_corner[i][2];
+        const byte a=p34_corner[i][0],b=p34_corner[i][1],c=p34_corner[i][2];
         int ccol=(1<<cube->arr[a])|(1<<cube->arr[b])|(1<<cube->arr[c]);
         int r=0;
         if(ccol&64)r|=1;
@@ -604,13 +604,155 @@ int p3_solve(stCube*cube,int*res){
     return cnt;
 }
 
+byte p4_ps[256],p4_pl[24],p4_cTble[96][6],p4_color[64];
+const byte p4_edge[12][3]={{1,28},{7,10},{46,16},{52,34},{21,14},{23,30},{39,32},{41,12},{19,5},{25,50},{43,48},{37,3}};
+unsigned short p4_cl[96],p4_eTble[6912][6];
+unsigned int p4_back[663552];
+void p4_precalc_pr(){
+    if(p4_pl[0]==27){
+        return;
+    }
+    int perm[4]={0,1,2,3},c=0;
+    do{
+        int r=0;
+        for(int i=0;i<4;i++){
+            r=(r<<2)|perm[i];
+        }
+        p4_ps[r]=c;
+        p4_pl[c]=r;
+        ++c;
+    }while(next_permutation_int(perm,4));
+}
+void p4_precalc_c(){
+    p4_precalc_pr();
+    queue*q=initQ(96);
+    pushQ(q,0);
+    p4_cl[0]=6939;
+    while(!emptyQ(q)){
+        int f=frontQ(q);
+        popQ(q);
+        stCube nc;
+        memset(&nc,0,sizeof(nc));
+        for(int i=0;i<8;++i){
+            nc.arr[p34_corner[7-i][0]]=(p4_cl[f]>>(i<<1))&3;
+        }
+        for(int i=0;i<6;++i){
+            if(!p4_cTble[f][i]){
+                turnCube(&nc,i*3+1);
+                int lp=0;
+                for(int i=0;i<8;++i){
+                    lp=(lp<<2)|nc.arr[p34_corner[i][0]];
+                }
+                int sp=(p4_ps[lp>>8]<<2)|((lp>>6)&3);
+                if(!p4_cl[sp]){
+                    p4_cl[sp]=lp;
+                    pushQ(q,sp);
+                }
+                p4_cTble[f][i]=sp;
+                p4_cTble[sp][i]=f;
+                turnCube(&nc,i*3+1);
+            }
+        }
+    }
+}
+void p4_precalc_e(){
+    p4_precalc_pr();
+    unsigned int el[6912];
+    memset(el,0,sizeof(el));
+    queue*q=initQ(6912);
+    while(!emptyQ(q)){
+        int f=frontQ(q);
+        popQ(q);
+        stCube nc;
+        memset(&nc,0,sizeof(nc));
+        for(int i=0;i<12;++i){
+            nc.arr[p4_edge[11-i][0]]=(el[f]>>(1<<1))&3;
+        }
+        for(int i=0;i<6;++i){
+            if(!p4_eTble[f][i]){
+                turnCube(&nc,i*3+1);
+                int lp=0,llp=0;
+                for(int j=0;j<3;++j){
+                    int r=0;
+                    for(int k=0;k<4;++k){
+                        r=(r<<2)|nc.arr[p4_edge[(j<<2)|k][0]];
+                    }
+                    llp=(llp<<8)|r;
+                    lp=lp*24+p4_ps[r];
+                }
+                const int nf=lp>>1;
+                if(!el[nf]){
+                    el[nf]=llp;
+                    pushQ(q,nf);
+                }
+                p4_eTble[f][i]=nf;
+                p4_eTble[nf][i]=f;
+                turnCube(&nc,i*3+1);
+            }
+        }
+    }
+}
+void p4_precalc(){
+    p4_precalc_c();
+    p4_precalc_e();
+    {
+        int i=0;
+        for(;i<8;++i){
+            int v=(1<<(p34_corner[i][0]/9))|(1<<(p34_corner[i][1]/9))|(1<<(p34_corner[i][2]/9));
+            p4_color[v]=i&3;
+        }
+        for(int j=0;j<12;++i,++j){
+            int v=(1<<(p4_edge[j][0]/9))|(1<<(p4_edge[j][1]/9));
+            p4_color[v]=i&3;
+        }
+    }
+    queue*q=initQ(663552);
+    p4_back[0]=-1;
+    pushQ(q,0);
+    while(!emptyQ(q)){
+        int f=frontQ(q);
+        popQ(q);
+        int e=f/96,c=f%96;
+        for(int i=0;i<6;++i){
+            int ne=p4_eTble[e][i],nc=p4_cTble[c][i];
+            int nf=ne*96+nc;
+            if(!p4_back[nf]){
+                p4_back[nf]=((i+1)<<20)|f;
+                pushQ(q,nf);
+            }
+        }
+    }
+}
+int p4_solve(stCube*cube,int*res){
+    int c=0;
+    for(int i=0;i<8;++i){
+        c=(c<<2)|p4_color[((1<<cube->arr[p34_corner[i][0]]))]|p4_color[((1<<cube->arr[p34_corner[i][1]]))]|p4_color[((1<<cube->arr[p34_corner[i][2]]))];
+    }
+    c=(p4_ps[c>>8]<<2)|((c>>6)&3);
+    int e=0;
+    for(int i=0;i<3;++i){
+        int r=0;
+        for(int j=0;j<4;++j){
+            r=(r<<2)|p4_color[((1<<cube->arr[p4_edge[(i<<2)|j][0]])|(1<<cube->arr[p4_edge[(i<<2)|j][1]]))>>1];
+        }
+        e=(e*24)+p4_ps[r];
+    }
+    e>>=1;
+    int r=e*96+c,cnt=0;
+    while(~p4_back[r]){
+        int val=p4_back[r];
+        res[cnt++]=(val>>20)*3-2;
+        r=val&1048575;
+    }
+    return cnt;
+}
 int main(){
     p1_precalc();
     p2_precalc();
     p3_precalc();
-    //p4_precalc();              
+    p4_precalc();
     stCube cube;
-    int code[64];                
+    int code[64];
     int len=0,n;
     readCube(&cube);
     n=p1_solve(&cube,code+len);
@@ -625,10 +767,10 @@ int main(){
     for(int i=0;i<n;i++)
         turnCube(&cube,code[len+i]);
     len+=n;
-    // n=p4_solve(&cube,code+len);
-    // for(int i=0;i<n;i++)
-    //     turnCube(&cube,code[len+i]);
-    // len+=n;
+    n=p4_solve(&cube,code+len);
+    for(int i=0;i<n;i++)
+        turnCube(&cube,code[len+i]);
+    len+=n;
     for(int i=0;i<len;i++){
         int op=code[i];
         if(op==-1)printf("/ ");

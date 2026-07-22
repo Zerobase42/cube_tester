@@ -7,6 +7,7 @@ import ctypes
 
 os.system("mode con: cols=120 lines=45")
 
+FRAME_MSEC=(1/24)/2 # 24 fps
 STD_OUTPUT_HANDLE = -11
 
 hOut = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
@@ -57,7 +58,7 @@ with open(badapple_path, "r", encoding="ascii") as f:
             end = start + WIDTH
 
             print(''.join(chars[start:end]))
-        time.sleep(0.033)
+        time.sleep(FRAME_MSEC)
 
 end_time=time.time()
 

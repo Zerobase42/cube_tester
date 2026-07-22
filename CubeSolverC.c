@@ -1,3 +1,4 @@
+#define DEBUG 1
 /*
          00 01 02
          03 04 05
@@ -15,16 +16,23 @@
 #include<unistd.h>
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx,avx2,fma")
+#if DEBUG==1
+#define debug(format,args...)fprintf(stderr,format,##args)
+#else
+#define debug(format,args...)
+#endif
 typedef struct{
     int*buf;
     int front;
     int rear;
+    int size;
 }queue;
 static inline queue*initQ(int size){
     queue*q=(queue*)malloc(sizeof(queue));
     q->buf=(int*)malloc(sizeof(int)*size);
     q->front=0;
     q->rear=0;
+    q->size=size;
     return q;
 }
 static inline void delQ(queue*q){
@@ -34,13 +42,31 @@ static inline void delQ(queue*q){
 static inline int emptyQ(const queue*q){
     return q->front==q->rear;
 }
-static inline void pushQ(queue*q,int x){
+static inline void pushQ(queue *q,int x){
+    if(q->rear>=q->size){
+        fprintf(stderr,
+            "[QUEUE ERROR] push overflow (rear=%d size=%d)\n",
+            q->rear,q->size);
+        _Exit(-1);
+    }
     q->buf[q->rear++]=x;
 }
-static inline int popQ(queue*q){
+static inline int popQ(queue *q){
+    if(q->front>=q->rear){
+        fprintf(stderr,
+            "[QUEUE ERROR] pop underflow (front=%d rear=%d)\n",
+            q->front,q->rear);
+        _Exit(-1);
+    }
     return q->buf[q->front++];
 }
-static inline int frontQ(const queue*q){
+static inline int frontQ(const queue *q){
+    if(q->front>=q->rear){
+        fprintf(stderr,
+            "[QUEUE ERROR] front on empty queue (front=%d rear=%d)\n",
+            q->front,q->rear);
+        _Exit(-1);
+    }
     return q->buf[q->front];
 }
 #define byte unsigned char
@@ -95,17 +121,10 @@ static inline void turnCube(stCube*cube,byte x){
         case 2:__ccw_turn(cube,il);break;
     }
 }
-static inline void readCube(stCube*cube){
-    static char rbuf[144];
-#ifdef __linux__
-    read(0,rbuf,144);
-#else
-    fread(rbuf,0,144,stdin);
-#endif
-    int j=0;
-    for(int i=0;i<144&&j<54;i++){
-        if((unsigned char)rbuf[i]<=' ')continue;
-        cube->arr[__ord[j++]]=rbuf[i]-'0';
+void readCube(stCube*cube){
+    for(int i=0,c;i<54;i++){
+        scanf("%d",&c);
+        cube->arr[__ord[i]]=c;
     }
 }
 static inline void printCube(const stCube*cube){
@@ -127,23 +146,31 @@ static inline void printCube(const stCube*cube){
 
 static byte next_permutation_int(int*arr,int n){
     if(n<=1)return 0;
-    int i=n-2,tmp;
-    while(i>=0&&arr[i]>=arr[i+1])--i;
-    if(i<0){
-        for(int lo=0,hi=n-1;lo<hi;++lo,--hi){
-            tmp=arr[lo];arr[lo]=arr[hi];arr[hi]=tmp;
+    int i=n-1,i1,i2,t;
+    while(1){
+        i1=i;
+        if(arr[--i]<arr[i1]){
+            i2=n;
+            while(arr[i]>=arr[--i2]);
+            t=arr[i];
+            arr[i]=arr[i2];
+            arr[i2]=t;
+            for(int l=i1,r=n-1;l<r;++l,--r){
+                t=arr[l];
+                arr[l]=arr[r];
+                arr[r]=t;
+            }//reverse
+            return 1;
         }
-        return 1;
+        if(i==0){
+            for(int l=0,r=n-1;l<r;++l,--r){
+                int t=arr[l];
+                arr[l]=arr[r];
+                arr[r]=t;
+            }// reverse
+            return 0;
+        }
     }
-    int j=n-1;
-    while(arr[j]<=arr[i])--j;
-    tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
-    for(int lo=i+1,hi=n-1;lo<hi;++lo,--hi){
-        int t=arr[lo];
-        arr[lo]=arr[hi];
-        arr[hi]=t;
-    }
-    return 1;
 }
 
 unsigned short p1_back[2048];
@@ -418,11 +445,11 @@ void p3_precalc_pr(){
             perm_val=(perm_val<<3)|permutation[i];
         }
         p3_prs[(perm_val<<1)|(permutation[6]>permutation[7])]=c;
-        p3_prl[c]=(perm_val<<6)|(permutation[6]<<3)|permutation[7];
+        p3_prl[c]=(perm_val<<6)|(permutation[6]<<3)|permutation[7]; // RTE
         ++c;
     }while(next_permutation_int(permutation,8));
 }
-void p3_preclac_o(){
+void p3_preclac_c(){
     p3_precalc_pr();
     for(int i=0;i<40320;++i){
         int f=p3_prl[i];
@@ -511,8 +538,10 @@ void p3_precalc_e(){
     }
 }
 void p3_precalc(){
-    p3_preclac_o();
+    p3_preclac_c();
+    debug("-- p3 corner calculated\n");
     p3_precalc_e();
+    debug("-- p3 edge calculated\n");
     queue*q=initQ(2822400);
     {
         int inch[40320];
@@ -527,7 +556,7 @@ void p3_precalc(){
             popQ(q0);
             byte perm[8];
             {
-                int x=p3_pl[f];
+                int x=p3_prl[f];
                 for(int i=7;i>=0;--i){
                     perm[i]=x&7;
                     x>>=3;
@@ -553,6 +582,7 @@ void p3_precalc(){
                 swapByte(perm[s>>3],perm[s&7]);
             }
         }
+        delQ(q0);
     }
     const int op_sz=10;
     while(!emptyQ(q)){
@@ -570,6 +600,7 @@ void p3_precalc(){
             }
         }
     }
+    delQ(q);
 }
 int p3_solve(stCube*cube,int*res){
     int c=0;
@@ -605,7 +636,7 @@ int p3_solve(stCube*cube,int*res){
 }
 
 byte p4_ps[256],p4_pl[24],p4_cTble[96][6],p4_color[64];
-const byte p4_edge[12][3]={{1,28},{7,10},{46,16},{52,34},{21,14},{23,30},{39,32},{41,12},{19,5},{25,50},{43,48},{37,3}};
+const byte p4_edge[12][2]={{1,28},{7,10},{46,16},{52,34},{21,14},{23,30},{39,32},{41,12},{19,5},{25,50},{43,48},{37,3}};
 unsigned short p4_cl[96],p4_eTble[6912][6];
 unsigned int p4_back[663552];
 void p4_precalc_pr(){
@@ -654,19 +685,22 @@ void p4_precalc_c(){
             }
         }
     }
+    delQ(q);
 }
 void p4_precalc_e(){
     p4_precalc_pr();
     unsigned int el[6912];
     memset(el,0,sizeof(el));
     queue*q=initQ(6912);
+    pushQ(q,0);
+    el[0]=1776411;
     while(!emptyQ(q)){
         int f=frontQ(q);
         popQ(q);
         stCube nc;
         memset(&nc,0,sizeof(nc));
         for(int i=0;i<12;++i){
-            nc.arr[p4_edge[11-i][0]]=(el[f]>>(1<<1))&3;
+            nc.arr[p4_edge[11-i][0]]=(el[f]>>(i<<1))&3;
         }
         for(int i=0;i<6;++i){
             if(!p4_eTble[f][i]){
@@ -691,6 +725,7 @@ void p4_precalc_e(){
             }
         }
     }
+    delQ(q);
 }
 void p4_precalc(){
     p4_precalc_c();
@@ -722,11 +757,12 @@ void p4_precalc(){
             }
         }
     }
+    delQ(q);
 }
 int p4_solve(stCube*cube,int*res){
     int c=0;
     for(int i=0;i<8;++i){
-        c=(c<<2)|p4_color[((1<<cube->arr[p34_corner[i][0]]))]|p4_color[((1<<cube->arr[p34_corner[i][1]]))]|p4_color[((1<<cube->arr[p34_corner[i][2]]))];
+        c=(c<<2)|p4_color[((1<<cube->arr[p34_corner[i][0]]))|((1<<cube->arr[p34_corner[i][1]]))|((1<<cube->arr[p34_corner[i][2]]))];
     }
     c=(p4_ps[c>>8]<<2)|((c>>6)&3);
     int e=0;
@@ -748,39 +784,46 @@ int p4_solve(stCube*cube,int*res){
 }
 int main(){
     p1_precalc();
+    debug("p1 precalculated\n");
     p2_precalc();
+    debug("p2 precalculated\n");
     p3_precalc();
+    debug("p3 precalculated\n");
     p4_precalc();
+    debug("p4 precalculated\n");
     stCube cube;
     int code[64];
-    int len=0,n;
-    readCube(&cube);
-    n=p1_solve(&cube,code+len);
-    for(int i=0;i<n;i++)
-        turnCube(&cube,code[len+i]);
-    len+=n;
-    n=p2_solve(&cube,code+len);
-    for(int i=0;i<n;i++)
-        turnCube(&cube,code[len+i]);
-    len+=n;
-    n=p3_solve(&cube,code+len);
-    for(int i=0;i<n;i++)
-        turnCube(&cube,code[len+i]);
-    len+=n;
-    n=p4_solve(&cube,code+len);
-    for(int i=0;i<n;i++)
-        turnCube(&cube,code[len+i]);
-    len+=n;
-    for(int i=0;i<len;i++){
-        int op=code[i];
-        if(op==-1)printf("/ ");
-        else{
-            putchar("UFRBLD"[op/3]);
-            int r=op%3;
-            if(r)putchar(" 2'"[r]);
-            putchar(' ');
+    int len=0,n,T;
+    scanf("%d",&T);
+    while(T--){
+        readCube(&cube);
+        n=p1_solve(&cube,code+len);
+        for(int i=0;i<n;i++)
+            turnCube(&cube,code[len+i]);
+        len+=n;
+        n=p2_solve(&cube,code+len);
+        for(int i=0;i<n;i++)
+            turnCube(&cube,code[len+i]);
+        len+=n;
+        n=p3_solve(&cube,code+len);
+        for(int i=0;i<n;i++)
+            turnCube(&cube,code[len+i]);
+        len+=n;
+        n=p4_solve(&cube,code+len);
+        for(int i=0;i<n;i++)
+            turnCube(&cube,code[len+i]);
+        len+=n;
+        for(int i=0;i<len;i++){
+            int op=code[i];
+            if(op==-1)printf("/ ");
+            else{
+                putchar("UFRBLD"[op/3]);
+                int r=op%3;
+                if(r)putchar(" 2'"[r]);
+                putchar(' ');
+            }
         }
+        putchar('\n');
     }
-    putchar('\n');
     return 0;
 }
